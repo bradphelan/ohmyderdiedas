@@ -1,0 +1,2 @@
+module WordHelper
+end

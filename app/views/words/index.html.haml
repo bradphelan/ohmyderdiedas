@@ -1,0 +1,11 @@
+%div{ :data => {:role => "header" }}
+  %h1 German Word Trainer
+ 
+%div{ :data => {:role => "content" }}
+  %ul{ :data => { :role=> "listview" }}
+    %h2= @word
+    %li= link_to "der",  check_word_path(:article => "der", :word=> @word), 'data-role'=>:button, :rel => "external"
+    %li= link_to "die", check_word_path(:article => "die", :word=> @word), 'data-role'=>:button, :rel => "external"
+    %li= link_to "das", check_word_path(:article => "das", :word=> @word), 'data-role'=>:button, :rel => "external"
+
+
