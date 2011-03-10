@@ -1,23 +1,32 @@
 
 class WordsController < ApplicationController
 
+
+
   WORDS = <<-EOF.each_line.collect.map(&:split)
-  der Hund Hunden
-  die Sessel Sesseln
-  das Kind Kindern
-  das Kuh Kuhen
-  die Hendel Hendeln
-  der Markt Markten
+  das Jahr
+  das Mal
+  das Beispiel
+  die Zeit
+  die Frau
+  der Mensch
+  das Kind
+  der Tag
+  der Mann
+  das Land
+  die Frage
+  das Haus
+  der Fall
   EOF
+  
 
   MAP = {}
   WORDS.each do |l|
 
     article = l[0] 
     word    = l[1] 
-    plural  = l[2] 
 
-    MAP[word] = {:word => word, :article => article, :plural => plural }
+    MAP[word] = {:word => word, :article => article}
 
   end
 
