@@ -1,15 +1,9 @@
-%div{ :data => {:role => "header" }}
-  %h1 German Word Trainer
+%div{ :data => {:role => "header", :backbtn=>"false" }}
+  %h1=@word
  
 %div{ :data => {:role => "content" }}
   %ul{ :data => { :role=> "listview" }}
-    %h2= @word
-    =form_for @word, :url => check_word_path(:article => "der", :word=> @word), :method=>"post" do |f|
-      = f.submit :type=>"submit", :name=>"submit", :value=>"der" 
-
-    =form_for @word, :url => check_word_path(:article => "die", :word=> @word), :method=>"post" do |f|
-      = f.submit :type=>"submit", :name=>"submit", :value=>"die" 
-
-    =form_for @word, :url => check_word_path(:article => "das", :word=> @word), :method=>"post" do |f|
-      = f.submit :type=>"submit", :name=>"submit", :value=>"das" 
-
+    -# :time is added to avoid jquery UI caching the pages
+    %li= link_to "der", check_word_path(:article => "der", :word=> @word, :time=>Time.now)
+    %li= link_to "die", check_word_path(:article => "die", :word=> @word, :time=>Time.now)
+    %li= link_to "das", check_word_path(:article => "das", :word=> @word, :time=>Time.now)
