@@ -17,6 +17,35 @@ class WordsController < ApplicationController
   die Frage
   das Haus
   der Fall
+
+  die Geschäftsleute
+  die Besprechung
+  das Geschäftsessen
+  die Meeresfrüchte
+  der Flügel
+  der Tourist
+  die Giraffe
+  der Käfig 
+  die Schlange
+  die Maus
+  der affe
+  der Hund
+  der Löwe
+  das Zebra
+  das Schwein
+  das Huhn
+  das Pferd
+  das Rind
+  das Kalb
+  der Fisch
+  die Ente
+  das Schaf
+  der Elefant
+  der Bär
+  der Wölf
+  das Kamel
+  der Tiger
+  die Katze
   EOF
   
 
