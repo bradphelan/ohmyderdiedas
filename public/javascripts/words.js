@@ -13,13 +13,23 @@ $('#mainPage').live('pagecreate',function(event){
 
       if (guessed_article == article){
         $("#messages").html(guessed_article + " " + word + " is correct");
+        this.newWord();
       }else{
         $("#messages").html(guessed_article + " " + word + " is incorrect");
       }
 
     }
 
-    ,events: {   "click .der" : "handleDer" ,
+    ,newWord: function(){
+      $.getJSON('/words/new.json',
+        function(data){
+          $("#word").data('word', data.word).data('article', data.article).html(data.word);
+        }
+        )
+    }
+
+
+    ,events: {  "click .der" : "handleDer" ,
                 "click .die" : "handleDie" ,
                 "click .das" : "handleDas" ,
               }
