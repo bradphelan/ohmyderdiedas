@@ -1,9 +1,8 @@
-%div{ :data => {:role => "header", :backbtn=>"false" }}
-  %h1=@word
+%div{:id=>"word", :data => {:role => "header", :backbtn=>"false", :word=>@word[:word], :article=>@word[:article] }}
+  %h1=@word[:word]
  
 %div{ :data => {:role => "content" }}
-  %ul{ :data => { :role=> "listview" }}
-    -# :time is added to avoid jquery UI caching the pages
-    %li= link_to "der", check_word_path(:article => "der", :word=> @word, :time=>Time.now)
-    %li= link_to "die", check_word_path(:article => "die", :word=> @word, :time=>Time.now)
-    %li= link_to "das", check_word_path(:article => "das", :word=> @word, :time=>Time.now)
+  %ul{:id=>"derdiedas",  :data => { :role=> "listview" }}
+    %li.der der
+    %li.die die
+    %li.das das

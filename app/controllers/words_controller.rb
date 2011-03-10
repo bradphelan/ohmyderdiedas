@@ -1,9 +1,8 @@
-
+# encoding: UTF-8
 class WordsController < ApplicationController
 
 
-
-  WORDS = <<-EOF.each_line.collect.map(&:split)
+  WORDS=<<-EOF.each_line.collect.map(&:split)
   das Jahr
   das Mal
   das Beispiel
@@ -17,7 +16,6 @@ class WordsController < ApplicationController
   die Frage
   das Haus
   der Fall
-
   die Geschäftsleute
   die Besprechung
   das Geschäftsessen
@@ -50,24 +48,33 @@ class WordsController < ApplicationController
   
 
   MAP = {}
-  WORDS.each do |l|
-
-    article = l[0] 
-    word    = l[1] 
-
-    MAP[word] = {:word => word, :article => article}
-
+  WORDS = WORDS.map do |l|
+    {:word => l[1], :article => l[0]}
   end
+  WORDS.each do |l|
+    MAP[l[:word]] = l
+  end
+
 
 
   def new
 
-    unless @word = params[:word]
-      n = rand(WORDS.size)
-      @items = WORDS[n]
-      @word    = @items[1] 
+    respond_to do |format|
+        
+        if params[:word]
+          @word = {:word => params[:word]}
+        else @word = params[:word]
+          @word = rand_word
+        end
+
+      format.html do
+        render :index
+      end
+
+      format.json do
+        render :json => @word.to_json
+      end
     end
-    render :index
 
   end
 
@@ -85,5 +92,12 @@ class WordsController < ApplicationController
 
   def get
 
+  end
+
+  private
+
+  def rand_word
+      n = rand(WORDS.size)
+      WORDS[n]
   end
 end
