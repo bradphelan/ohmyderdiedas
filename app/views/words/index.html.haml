@@ -4,8 +4,12 @@
 %div{ :data => {:role => "content" }}
   %ul{ :data => { :role=> "listview" }}
     %h2= @word
-    %li= link_to "der",  check_word_path(:article => "der", :word=> @word), 'data-role'=>:button#, :rel => "external"
-    %li= link_to "die", check_word_path(:article => "die", :word=> @word), 'data-role'=>:button #, :rel => "external"
-    %li= link_to "das", check_word_path(:article => "das", :word=> @word), 'data-role'=>:button #, :rel => "external"
+    =form_for @word, :url => check_word_path(:article => "der", :word=> @word), :method=>"post" do |f|
+      = f.submit :type=>"submit", :name=>"submit", :value=>"der" 
 
+    =form_for @word, :url => check_word_path(:article => "die", :word=> @word), :method=>"post" do |f|
+      = f.submit :type=>"submit", :name=>"submit", :value=>"die" 
+
+    =form_for @word, :url => check_word_path(:article => "das", :word=> @word), :method=>"post" do |f|
+      = f.submit :type=>"submit", :name=>"submit", :value=>"das" 
 

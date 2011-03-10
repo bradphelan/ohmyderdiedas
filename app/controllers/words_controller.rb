@@ -37,7 +37,7 @@ class WordsController < ApplicationController
     @word = params[:word]
     if MAP[@word][:article] == params[:article]
       params[:article] = nil
-      redirect_to new_word_path, :notice => "#{MAP[@word][:article]} #{@word} is correct"
+      redirect_to new_word_path, :notice => "#{MAP[@word][:article]} #{@word} is correct", :rel => :external
       return
     end
     flash[:notice] = "#{MAP[@word][:article]} #{@word} is incorrect"
