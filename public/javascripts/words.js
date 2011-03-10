@@ -1,10 +1,5 @@
 $('#mainPage').live('pagecreate',function(event){
 
-  var word = new Backbone.Model({
-    word: "",
-  });
-
-
   var WordView = Backbone.View.extend({
 
     check: function(guessed_article){
@@ -23,7 +18,8 @@ $('#mainPage').live('pagecreate',function(event){
     ,newWord: function(){
       $.getJSON('/words/new.json',
         function(data){
-          $("#word").data('word', data.word).data('article', data.article).html(data.word);
+          $("#word").data('word', data.word).data('article', data.article)
+          $("#word h1").html(data.word);
         }
         )
     }
