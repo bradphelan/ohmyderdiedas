@@ -1,75 +1,70 @@
 $('#mainPage').live('pagecreate',function(event){
 
-  
+  // Source of words. Generates JSON data of
+  // the form
+  //
+  // { word: "Mann", article: "der" }
   var Word = Backbone.Model.extend({
-    url: '/words/new.json'
+    initialize: function() {
+      this.fetch();
+      this.set({message: ''});
+    }
+
+    ,url: '/words/new.json'
+
+    ,setAnswer: function (article){
+      txt = article + " " + this.get('word');
+      if (article == this.get('article')){
+        this.set({message: txt + " is correct"});
+        this.fetch();
+      }else{
+        this.set({message: txt + " is incorrect"});
+      }
+    }
+
   });
 
   var WordView = Backbone.View.extend({
 
-    word  : new Word()
+    word: new Word()
+
+    , initialize: function() {
+      _.bindAll(this, "message", "render");
+      this.word.bind('change:message', this.message);
+      this.word.bind('all', this.render);
+    }
+
+    , render: function(){
+        $("#word h1").html(this.word.get('word'));
+    }
+
+    , message: function(){
+        $("#messages").html(this.word.get('message'));
+    }
+
+
+    // --------------
+    // Event Handling
+    // --------------
 
     , events: {  "click .der" : "handleDer" ,
-               "click .die" : "handleDie" ,
-               "click .das" : "handleDas" ,
-            }
-
-    ,initialize: function() {
-      self = this;
-      this.word.bind('change:word', function(model, word) {
-        self.setWord(model.get('word'), model.get('article'));
-      });
-    
-    }
-            
-
-    ,check: function(guessed_article){
-
-      word = $("#word").data('word');
-
-      article = $("#word").data('article');
-
-      if (guessed_article == article){
-        this.setMessage(guessed_article + " " + word + " is correct");
-        this.newWord();
-      }else{
-        this.setMessage(guessed_article + " " + word + " is incorrect");
-      }
-
-    }
-
-    ,setMessage: function(message){
-        $("#messages").html(message);
-    }
-
-    ,setWord: function(word, article){
-        $("#word").data('word', word).data('article', article);
-        $("#word h1").html(word);
-    }
-
-
-    ,newWord: function(){
-      this.word.fetch();
-    }
-
+                 "click .die" : "handleDie" ,
+                 "click .das" : "handleDas" ,
+              }
 
     , handleDer: function(data) {
-      this.check('der');
+      this.word.setAnswer('der');
     }
     , handleDie: function(data) {
-      this.check('die');
+      this.word.setAnswer('die');
     }
     , handleDas: function(data) {
-      this.check('das');
+      this.word.setAnswer('das');
     }
-
-  , render: function() {
-    this.delegateEvents();
-    return this;
-  },
 
   });
 
+  // Attach the view to an element
   var view = new WordView({el: $("#derdiedas")});
 
 })    
