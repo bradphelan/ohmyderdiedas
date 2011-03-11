@@ -1,34 +1,57 @@
 $('#mainPage').live('pagecreate',function(event){
 
+  
+  var Word = Backbone.Model.extend({
+    url: '/words/new.json'
+  });
+
   var WordView = Backbone.View.extend({
 
-    check: function(guessed_article){
+    word  : new Word()
+
+    , events: {  "click .der" : "handleDer" ,
+               "click .die" : "handleDie" ,
+               "click .das" : "handleDas" ,
+            }
+
+    ,initialize: function() {
+      self = this;
+      this.word.bind('change:word', function(model, word) {
+        self.setWord(model.get('word'), model.get('article'));
+      });
+    
+    }
+            
+
+    ,check: function(guessed_article){
+
       word = $("#word").data('word');
+
       article = $("#word").data('article');
 
       if (guessed_article == article){
-        $("#messages").html(guessed_article + " " + word + " is correct");
+        this.setMessage(guessed_article + " " + word + " is correct");
         this.newWord();
       }else{
-        $("#messages").html(guessed_article + " " + word + " is incorrect");
+        this.setMessage(guessed_article + " " + word + " is incorrect");
       }
 
     }
 
-    ,newWord: function(){
-      $.getJSON('/words/new.json',
-        function(data){
-          $("#word").data('word', data.word).data('article', data.article)
-          $("#word h1").html(data.word);
-        }
-        )
+    ,setMessage: function(message){
+        $("#messages").html(message);
+    }
+
+    ,setWord: function(word, article){
+        $("#word").data('word', word).data('article', article);
+        $("#word h1").html(word);
     }
 
 
-    ,events: {  "click .der" : "handleDer" ,
-                "click .die" : "handleDie" ,
-                "click .das" : "handleDas" ,
-              }
+    ,newWord: function(){
+      this.word.fetch();
+    }
+
 
     , handleDer: function(data) {
       this.check('der');
@@ -48,7 +71,6 @@ $('#mainPage').live('pagecreate',function(event){
   });
 
   var view = new WordView({el: $("#derdiedas")});
-  view.render();
 
 })    
 
