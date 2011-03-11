@@ -5,6 +5,7 @@ $('#mainPage').live('pagecreate',function(event){
   //
   // { word: "Mann", article: "der" }
   var Word = Backbone.Model.extend({
+
     initialize: function() {
       this.fetch();
       this.set({message: ''});
@@ -29,23 +30,32 @@ $('#mainPage').live('pagecreate',function(event){
     word: new Word()
 
     , initialize: function() {
-      _.bindAll(this, "message", "render");
-      this.word.bind('change:message', this.message);
-      this.word.bind('all', this.render);
+      this.bindModel();
+    }
+  
+    // ---------------------
+    // Model Event Handling
+    // ---------------------
+
+    , bindModel: function(){
+      _.bindAll(this, "renderMessage", "renderWord");
+      this.word.bind('change:message', this.renderMessage);
+      this.word.bind('change:word', this.renderWord);
+
     }
 
-    , render: function(){
+    , renderWord: function(){
         $("#word h1").html(this.word.get('word'));
     }
 
-    , message: function(){
+    , renderMessage: function(){
         $("#messages").html(this.word.get('message'));
     }
 
 
-    // --------------
-    // Event Handling
-    // --------------
+    // ------------------
+    // UI Event Handling
+    // ------------------
 
     , events: {  "click .der" : "handleDer" ,
                  "click .die" : "handleDie" ,
