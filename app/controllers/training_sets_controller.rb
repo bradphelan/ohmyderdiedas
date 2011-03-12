@@ -15,6 +15,17 @@ class TrainingSetsController < ApplicationController
 
   def create
     @set = TrainingSet.create! params[:training_set].merge(:user=>current_user)
-    redirect_to training_sets_path
+    redirect_to edit_training_set_path
+  end
+
+  def edit
+    @set = TrainingSet.find(params[:id])
+  end
+
+  def update
+    @set = TrainingSet.find(params[:id])
+    @set.tags = params[:training_set][:tags]
+    @set.save!
+    redirect_to edit_training_set_path
   end
 end
