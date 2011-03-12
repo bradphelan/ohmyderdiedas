@@ -1,11 +1,17 @@
 %div{:id=>"word", :data => {:role => "header", :backbtn=>"false" }}
-  %h1=@word[:word]
+  %h1="Oh My Der Die Das"
+  -unless user_signed_in?
+    = link_to 'Sign In', new_user_session_path, "class" => "ui-btn-right"
+  -else
+    = link_to 'Sign Out', destroy_user_session_path, "class" => "ui-btn-right"
  
-%div{ :data => {:role => "content" }}
-  %ul{:id=>"derdiedas",  :data => { :role=> "listview" }}
-    %li
-      %a.der(data-role="button" rel="external") der
-    %li
-      %a.die(data-role="button" rel="external") die
-    %li
-      %a.das(data-role="button" rel="external") das
+-if user_signed_in?
+
+  %div{ :data => {:role => "content" }}
+    %ul{:id=>"derdiedas",  :data => { :role=> "listview" }}
+      %li
+        %a.der(data-role="button" rel="external") der
+      %li
+        %a.die(data-role="button" rel="external") die
+      %li
+        %a.das(data-role="button" rel="external") das

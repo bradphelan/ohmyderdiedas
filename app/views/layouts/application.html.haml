@@ -12,6 +12,9 @@
   %body
     %div{:id => "mainPage", "data-role" => "page"}
 
-      = content_tag :div, "", :id => "messages", :class => "ui-body ui-body-e"
+      -flash.each do |type, message|
+        %div{:class => "#{type} ui-body ui-body-e"}=flash[type]
+
+      %div{:id=>"messages", :class=>"ui-body ui-body-e"}
     
       = yield

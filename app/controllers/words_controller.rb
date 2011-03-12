@@ -55,8 +55,6 @@ class WordsController < ApplicationController
     MAP[l[:word]] = l
   end
 
-
-
   def new
 
     respond_to do |format|
@@ -72,25 +70,9 @@ class WordsController < ApplicationController
       end
 
       format.json do
-        render :json => @word.to_json
+        render :json => @word.to_json, :layout => false
       end
     end
-
-  end
-
-  def check
-    @word = params[:word]
-    if MAP[@word][:article] == params[:article]
-      params[:article] = nil
-      redirect_to new_word_path, :notice => "#{MAP[@word][:article]} #{@word} is correct", :rel => :external
-      return
-    end
-    flash[:notice] = "#{MAP[@word][:article]} #{@word} is incorrect"
-
-    redirect_to new_word_path(@word), :notice => "#{params[:article]} #{@word} is incorrect"
-  end
-
-  def get
 
   end
 
