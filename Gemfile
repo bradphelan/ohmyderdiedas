@@ -30,7 +30,8 @@ gem 'sqlite3-ruby', :require => 'sqlite3'
 #   gem 'webrat'
 # end
 
-gem 'devise'
+gem 'devise', :git => "https://github.com/plataformatec/devise.git", :tag => "v1.2.rc2"
+gem 'factory_girl'
 
 gem "haml-rails"
 gem "jquery-rails"
