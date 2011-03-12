@@ -1,4 +1,4 @@
-$('#mainPage').live('pagecreate',function(event){
+$('.page_set_run').live('pagecreate',function(event){
 
   // Source of words. Generates JSON data of
   // the form

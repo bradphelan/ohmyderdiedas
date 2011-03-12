@@ -1,0 +1,7 @@
+%div{ :data => {:role => "content" }}
+  %ul{:id=>"set_list",  :data => { :role=> "listview" }}
+    - @sets.each do |set|
+      %li
+        %a.set(data-role="button")=set.tags
+    %li(data-role="button" data-icon="plus")
+      %a(href=new_training_set_path)

@@ -41,4 +41,5 @@ describe TrainingSet do
       @ts2.nouns.should include @noun3
     end
   end
+
 end

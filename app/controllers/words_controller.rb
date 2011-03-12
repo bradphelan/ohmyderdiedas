@@ -55,6 +55,13 @@ class WordsController < ApplicationController
     MAP[l[:word]] = l
   end
 
+  before_filter :set_page
+
+  def set_page
+    @page = "page_set_run"
+  end
+
+
   def new
 
     respond_to do |format|

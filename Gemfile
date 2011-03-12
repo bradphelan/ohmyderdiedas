@@ -46,3 +46,6 @@ gem "heroku"
 gem 'hpricot'
 
 gem 'acts-as-taggable-on'
+
+
+gem 'formtastic'

@@ -10,11 +10,18 @@
     = javascript_include_tag 'words'
     = csrf_meta_tag
   %body
-    %div{:id => "mainPage", "data-role" => "page"}
+    %div{:class => @page, "data-role" => "page"}
 
       -flash.each do |type, message|
         %div{:class => "#{type} ui-body ui-body-e"}=flash[type]
 
       %div{:id=>"messages", :class=>"ui-body ui-body-e"}
+
+      %div{:id=>"word", :data => {:role => "header" }}
+        %h1="Oh My Der Die Das"
+        -if user_signed_in?
+          = link_to 'Sign Out', destroy_user_session_path, "class" => "ui-btn-right"
+        -else
+          = link_to 'Sign In', new_user_session_path, "class" => "ui-btn-right"
     
       = yield
