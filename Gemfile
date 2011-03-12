@@ -44,3 +44,5 @@ gem "compass-susy-plugin"
 gem "heroku"
 
 gem 'hpricot'
+
+gem 'acts-as-taggable-on'
