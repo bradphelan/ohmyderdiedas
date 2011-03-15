@@ -63,6 +63,9 @@ Derdiedas::Application.routes.draw do
   root :to => "words#new"
 
   resources :training_sets do
+    member do
+      post 'word', :as => "new_word", :action => "new_word"
+    end
   end
   
 end

@@ -15,7 +15,7 @@ class TrainingSetsController < ApplicationController
 
   def create
     @set = TrainingSet.create! params[:training_set].merge(:user=>current_user)
-    redirect_to edit_training_set_path
+    redirect_to edit_training_set_path(@set)
   end
 
   def edit
@@ -24,8 +24,19 @@ class TrainingSetsController < ApplicationController
 
   def update
     @set = TrainingSet.find(params[:id])
-    @set.tags = params[:training_set][:tags]
+    @set.tags = params[:training_set][:tags].downcase
     @set.save!
     redirect_to edit_training_set_path
+  end
+
+  def new_word
+    begin
+      @training_set = TrainingSet.find(params[:id])
+      @word = Noun.create_from_string params['training_set']['word']
+      current_user.tag @word, :with => @training_set.tags, :on => :tags
+    rescue Exception => e
+      flash[:error] = e.to_s
+    end
+    redirect_to :back
   end
 end

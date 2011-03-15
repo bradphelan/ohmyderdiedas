@@ -45,7 +45,7 @@ $('.page_set_run').live('pagecreate',function(event){
     }
 
     , renderWord: function(){
-        $("#word h1").html(this.word.get('word'));
+        $("#word").html(this.word.get('word'));
     }
 
     , renderMessage: function(){

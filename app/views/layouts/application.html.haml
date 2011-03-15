@@ -9,6 +9,8 @@
     %script{:src =>"http://documentcloud.github.com/underscore/underscore-min.js"}
     %script{:src =>"http://documentcloud.github.com/backbone/backbone-min.js"}
     = javascript_include_tag 'words'
+    = stylesheet_link_tag 'formtastic'
+    = stylesheet_link_tag 'formtastic_changes'
     = csrf_meta_tag
   %body
     %div{:class => @page, "data-role" => "page"}
@@ -16,13 +18,21 @@
       -flash.each do |type, message|
         %div{:class => "#{type} ui-body ui-body-e"}=flash[type]
 
-      %div{:id=>"messages", :class=>"ui-body ui-body-e"}
 
-      %div{:id=>"word", :data => {:role => "header" }}
-        %h1="Oh My Der Die Das"
-        -if user_signed_in?
-          = link_to 'Sign Out', destroy_user_session_path, "class" => "ui-btn-right"
-        -else
-          = link_to 'Sign In', new_user_session_path, "class" => "ui-btn-right"
+      %div(data-role="header")
+        %div(data-role="navbar")
+          %ul
+            %li
+              %a{:href=>training_sets_path}Sets
+            %li
+              %a{:href=>new_word_path}Run
+        
+            %li
+              -if user_signed_in?
+                = link_to 'Sign Out', destroy_user_session_path
+              -else
+                = link_to 'Sign In', new_user_session_path
+
+      %div{:id=>"messages", :class=>"ui-body ui-body-e"}
     
       = yield
