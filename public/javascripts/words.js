@@ -80,3 +80,13 @@ $('.page_set_run').live('pagecreate',function(event){
 })    
 
 
+$('.page_sets_manage').live('pagecreate',function(event){
+ $("#set-new-word")
+    //.bind("ajax:loading",  toggleLoading)
+    //.bind("ajax:complete", toggleLoading)
+    .bind("ajax:success", function(e, data, status, xhr) {
+      $("#set_list").prepend("<li>" + data.word + "</li>");
+      $("#new_word_training_set").val("");
+      $("#set_list").listview("refresh");
+    });
+});

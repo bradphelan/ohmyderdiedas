@@ -37,6 +37,13 @@ class TrainingSetsController < ApplicationController
     rescue Exception => e
       flash[:error] = e.to_s
     end
-    redirect_to :back
+    respond_to do |format|
+      format.html do
+        redirect_to :back
+      end
+      format.json do
+        render :json => {:word => @word.to_s}, :layout => false
+      end
+    end
   end
 end

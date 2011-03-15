@@ -4,7 +4,7 @@ class TrainingSet < ActiveRecord::Base
   validates :user, :presence => true
 
   def nouns(user)
-    Noun.tagged_with tags.split(/,/).map(&:strip), :owned_by => user
+    Noun.tagged_with tags.split(/,/).map(&:strip), :any => true, :owned_by => user
   end
 
 end
