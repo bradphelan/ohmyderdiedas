@@ -1,4 +1,4 @@
-$('.page_set_run').live('pagecreate',function(event){
+$('.page_sets_manage').live('pagecreate',function(event){
 
   // Source of words. Generates JSON data of
   // the form
@@ -11,7 +11,10 @@ $('.page_set_run').live('pagecreate',function(event){
       this.set({message: ''});
     }
 
-    ,url: '/words/new.json'
+    ,url: function(){
+      url = $("#derdiedas").data('url');
+      return url;
+    }
 
     ,setAnswer: function (article){
       txt = article + " " + this.get('word');
@@ -77,10 +80,6 @@ $('.page_set_run').live('pagecreate',function(event){
   // Attach the view to an element
   var view = new WordView({el: $("#derdiedas")});
 
-})    
-
-
-$('.page_sets_manage').live('pagecreate',function(event){
  $("#set-new-word")
     //.bind("ajax:loading",  toggleLoading)
     //.bind("ajax:complete", toggleLoading)

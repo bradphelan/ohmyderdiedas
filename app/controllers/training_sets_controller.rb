@@ -50,4 +50,40 @@ class TrainingSetsController < ApplicationController
       end
     end
   end
+
+  def random_word
+
+    respond_to do |format|
+        
+      if params[:word]
+        @word = {:word => params[:word]}
+      else @word = params[:word]
+        @word = rand_word
+      end
+
+      format.html do
+        render :index
+      end
+
+      format.json do
+        puts @word.to_json
+        render :json => {:word => @word.word, :article => @word.definate_article }, :layout => false
+      end
+    end
+
+  end
+
+  private
+
+  def all_words
+    # TODO.  This should go into memcache and be flushed
+    # on update
+    @set = TrainingSet.find(params[:id])
+    @set.nouns(current_user)
+  end
+
+  def rand_word
+    words = all_words
+    words[rand(words.size)]
+  end
 end

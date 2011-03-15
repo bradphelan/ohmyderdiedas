@@ -24,7 +24,7 @@ class Noun < ActiveRecord::Base
     Noun.create! :gender => gender, :word => word
   end
 
-  def to_s
+  def definate_article
     g = case gender
     when "m"
       "der"
@@ -33,6 +33,9 @@ class Noun < ActiveRecord::Base
     when "n"
       "das"
     end
-    "#{g.capitalize} #{word.capitalize}"
+  end
+
+  def to_s
+    "#{definate_article.capitalize} #{word.capitalize}"
   end
 end

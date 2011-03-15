@@ -17,3 +17,13 @@
       %ul{:id=>"set_list",  :data => {:filter=>true, :role=> "listview", :inset=>'true' }}
         - @set.nouns(current_user).each do |noun|
           %li=noun
+
+    %div(data-role="collapsible")
+      %h3 Play
+      %div{ :data => {:role => "content" }}
+        %ul{:id=>"derdiedas",  :data => { :role=> "listview" }, 'data-url'=>random_word_training_set_path(@set)}
+          %li(data-role="list-divider")
+            %h3{:id=>"word"}
+          %li.der der
+          %li.die die
+          %li.das das
