@@ -1,18 +1,19 @@
 %div{ :data => {:role => "content" }}
-  %div(data-role="collapsible")
-    %h3=@set.tags
+  %div(data-role="collapsible-set")
+    %div(data-role="collapsible")
+      %h3 Edit Tags
 
-    =form_for @set, :id=>"update-tags" do |f|
-      = f.text_field :tags
-      = f.submit
+      =form_for @set, :id=>"update-tags" do |f|
+        = f.text_field :tags
+        = f.submit
+        
+
+    %div(data-role="collapsible")
+      %h3 Add Words To List
+      %form{:action => new_word_training_set_path(:format=>:json), :id => "set-new-word", :method=>"post", :'data-remote' => true}
+        %input{:name=>"authenticity_token", :value=>form_authenticity_token, :type=>"hidden"}
+        %input{:name=>"training_set[word]", :type=>"text", :id=>"new_word_training_set"}
       
-
-  %div(data-role="collapsible")
-    %h3 Nouns
-    %form{:action => new_word_training_set_path(:format=>:json), :id => "set-new-word", :method=>"post", :'data-remote' => true}
-      %input{:name=>"authenticity_token", :value=>form_authenticity_token, :type=>"hidden"}
-      %input{:name=>"training_set[word]", :type=>"text", :id=>"new_word_training_set"}
-    
-    %ul{:id=>"set_list",  :data => {:filter=>true, :role=> "listview", :inset=>'true' }}
-      - @set.nouns(current_user).each do |noun|
-        %li=noun
+      %ul{:id=>"set_list",  :data => {:filter=>true, :role=> "listview", :inset=>'true' }}
+        - @set.nouns(current_user).each do |noun|
+          %li=noun

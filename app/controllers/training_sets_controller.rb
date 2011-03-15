@@ -35,14 +35,18 @@ class TrainingSetsController < ApplicationController
       @word = Noun.create_from_string params['training_set']['word']
       current_user.tag @word, :with => @training_set.tags, :on => :tags
     rescue Exception => e
-      flash[:error] = e.to_s
+      @error = e.to_s
     end
     respond_to do |format|
       format.html do
         redirect_to :back
       end
       format.json do
-        render :json => {:word => @word.to_s}, :layout => false
+        if @error
+          render :text => @error, :layout => false, :status => :unprocessable_entity
+        else
+          render :json => {:word => @word.to_s}, :layout => false
+        end
       end
     end
   end

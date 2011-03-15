@@ -88,5 +88,10 @@ $('.page_sets_manage').live('pagecreate',function(event){
       $("#set_list").prepend("<li>" + data.word + "</li>");
       $("#new_word_training_set").val("");
       $("#set_list").listview("refresh");
+      $("#messages").html("");
+    })
+    .bind("ajax:error", function(e, data, status, xhr){
+      $("#messages").html(data.responseText);
     });
+    
 });
