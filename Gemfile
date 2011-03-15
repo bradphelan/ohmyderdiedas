@@ -45,7 +45,7 @@ gem "heroku"
 
 gem 'hpricot'
 
-gem 'acts-as-taggable-on'
+gem 'acts-as-taggable-on', :git => 'git://github.com/bradphelan/acts-as-taggable-on.git', :tag => 'master'
 
 
 gem 'formtastic'

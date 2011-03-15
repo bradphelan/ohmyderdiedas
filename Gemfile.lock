@@ -1,4 +1,11 @@
 GIT
+  remote: git://github.com/bradphelan/acts-as-taggable-on.git
+  revision: 42d918fd9f1bb4ad6d497e796fa591c663886a69
+  tag: master
+  specs:
+    acts-as-taggable-on (2.0.6)
+
+GIT
   remote: https://github.com/plataformatec/devise.git
   revision: 4f093574da82c1fb18a1fd803b9b1ab27e9d132e
   tag: v1.2.rc2
@@ -38,7 +45,6 @@ GEM
       activemodel (= 3.0.3)
       activesupport (= 3.0.3)
     activesupport (3.0.3)
-    acts-as-taggable-on (2.0.6)
     arel (2.0.9)
     bcrypt-ruby (2.1.4)
     builder (2.1.2)
@@ -133,7 +139,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  acts-as-taggable-on
+  acts-as-taggable-on!
   compass
   compass-susy-plugin
   devise!
