@@ -77,20 +77,28 @@ $('.page_sets_manage').live('pagecreate',function(event){
 
   });
 
+  var Words = Backbone.Collection.extend({
+    model: Word
+    , url: function(){
+      return $("#set_list").data('url');
+    }
+  }
+  );
+
   // Attach the view to an element
   var view = new WordView({el: $("#derdiedas")});
 
- $("#set-new-word")
-    //.bind("ajax:loading",  toggleLoading)
-    //.bind("ajax:complete", toggleLoading)
-    .bind("ajax:success", function(e, data, status, xhr) {
-      $("#set_list").prepend("<li>" + data.word + "</li>");
-      $("#new_word_training_set").val("");
-      $("#set_list").listview("refresh");
-      $("#messages").html("");
-    })
-    .bind("ajax:error", function(e, data, status, xhr){
-      $("#messages").html(data.responseText);
-    });
+  $("#set-new-word")
+      //.bind("ajax:loading",  toggleLoading)
+      //.bind("ajax:complete", toggleLoading)
+      .bind("ajax:success", function(e, data, status, xhr) {
+        $("#set_list").prepend("<li>" + data.word + "</li>");
+        $("#new_word_training_set").val("");
+        $("#set_list").listview("refresh");
+        $("#messages").html("");
+      })
+      .bind("ajax:error", function(e, data, status, xhr){
+        $("#messages").html(data.responseText);
+      });
     
 });

@@ -10,11 +10,11 @@
 
     %div(data-role="collapsible")
       %h3 Add Words To List
-      %form{:action => new_word_training_set_path(:format=>:json), :id => "set-new-word", :method=>"post", :'data-remote' => true}
+      %form{:action => new_word_training_set_path, :id => "set-new-word", :method=>"post", :'data-remote' => true}
         %input{:name=>"authenticity_token", :value=>form_authenticity_token, :type=>"hidden"}
         %input{:name=>"training_set[word]", :type=>"text", :id=>"new_word_training_set"}
       
-      %ul{:id=>"set_list",  :data => {:filter=>true, :role=> "listview", :inset=>'true' }}
+      %ul{:id=>"set_list",  :data => {:filter=>true, :role=> "listview", :inset=>'true', :url=>training_set_path(@set) }}
         - @set.nouns(current_user).each do |noun|
           %li=noun
 

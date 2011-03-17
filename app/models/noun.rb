@@ -24,7 +24,14 @@ class Noun < ActiveRecord::Base
     Noun.create! :gender => gender, :word => word
   end
 
-  def definate_article
+  def as_json(x)
+    super.as_json.merge({
+      :article => article
+    })
+  end
+
+
+  def article
     g = case gender
     when "m"
       "der"
@@ -36,6 +43,6 @@ class Noun < ActiveRecord::Base
   end
 
   def to_s
-    "#{definate_article.capitalize} #{word.capitalize}"
+    "#{article.capitalize} #{word.capitalize}"
   end
 end

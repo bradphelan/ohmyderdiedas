@@ -3,6 +3,17 @@ class TrainingSetsController < ApplicationController
     @sets = TrainingSet.where :user_id => current_user.id
   end
 
+  def show
+    @set = TrainingSet.find(params[:id])
+    respond_to do |format|
+      format.html do
+      end
+      format.json do
+        render :json => @set.nouns(current_user)
+      end
+    end
+  end
+
   before_filter :set_page
 
   def set_page
@@ -45,7 +56,7 @@ class TrainingSetsController < ApplicationController
         if @error
           render :text => @error, :layout => false, :status => :unprocessable_entity
         else
-          render :json => {:word => @word.to_s}, :layout => false
+          render :json => { :word => @word.to_s}, :layout => false
         end
       end
     end
@@ -67,7 +78,7 @@ class TrainingSetsController < ApplicationController
 
       format.json do
         puts @word.to_json
-        render :json => {:word => @word.word, :article => @word.definate_article }, :layout => false
+        render :json => @word, :layout => false
       end
     end
 
