@@ -12,8 +12,7 @@ $('.page_sets_manage').live('pagecreate',function(event){
     }
 
     ,url: function(){
-      url = $("#word-play-view").data('url');
-      return url;
+      return $("#word-play-view").data('url');
     }
 
     ,setAnswer: function (article){
@@ -34,6 +33,7 @@ $('.page_sets_manage').live('pagecreate',function(event){
 
     , initialize: function() {
       this.bindModel();
+      this.word.fetch();
     }
   
     // ---------------------
@@ -41,13 +41,13 @@ $('.page_sets_manage').live('pagecreate',function(event){
     // ---------------------
 
     , bindModel: function(){
-      _.bindAll(this, "renderMessage", "appendWord");
+      _.bindAll(this, "renderMessage", "changeWord");
       this.word.bind('change:message', this.renderMessage);
-      this.word.bind('change:word', this.appendWord);
+      this.word.bind('change:word', this.changeWord);
 
     }
 
-    , appendWord: function(){
+    , changeWord: function(){
         $("#word").html(this.word.get('word'));
     }
 
@@ -65,13 +65,13 @@ $('.page_sets_manage').live('pagecreate',function(event){
                  "click .das" : "handleDas" ,
               }
 
-    , handleDer: function(data) {
+    , handleDer: function(e) {
       this.word.setAnswer('der');
     }
-    , handleDie: function(data) {
+    , handleDie: function(e) {
       this.word.setAnswer('die');
     }
-    , handleDas: function(data) {
+    , handleDas: function(e) {
       this.word.setAnswer('das');
     }
 
@@ -96,27 +96,24 @@ $('.page_sets_manage').live('pagecreate',function(event){
   );
 
   var WordAddView = Backbone.View.extend({
-    initialize: function(){
+    initialize:function(){
+      _.bindAll(this, "onSuccess", "onError");
     }
-
+                 
     , events: {"submit form" : "addItem"}
+
     , addItem : function(data){
-      console.log(data);
-      val = this.el.find("input").val();
-      this.model.create(
-        {word: val}
-
-        ,{
-          success: function(model, resp){
-          }
-
-          ,error: function(model, resp){
-            $("#messages").html(resp.responseText);
-          }
-          
-         }
-     );
+        this.model.create
+         ( { word: this.el.find("input").val() }
+         , { success: this.onSuccess
+           , error: this.onError
+           }
+         );
     }
+
+    , onSuccess: function(model,resp){ }
+    , onError: function(model, resp){ $("#messages").html(resp.responseText); }
+
   }
   );
 
@@ -141,23 +138,25 @@ $('.page_sets_manage').live('pagecreate',function(event){
 
     }
 
+    ,refresh: function(){this.list.listview("refresh");}
+
     ,prependWord: function(word){
       wv = new WordView({model: word}).render().el;
       self.list.prepend( wv );
-      self.list.listview("refresh");
+      self.refresh();
     }
 
     ,appendWord: function(word){
       wv = new WordView({model: word}).render().el;
       self.list.append( wv );
-      self.list.listview("refresh");
+      self.refresh();
     }
 
     ,render: function(){
       self = this;
       self.list.html("");
       this.model.each(function(word){self.appendWord(word)});
-      self.list.listview("refresh");
+      self.refresh();
     }
 
 
@@ -169,8 +168,8 @@ $('.page_sets_manage').live('pagecreate',function(event){
     url: $("#word-list-view").data('url')
   }
   );
+  new PlayView({model: words, el: $("#word-play-view")});
   new WordListView({model: words, el: $("#word-list-view")});
   new WordAddView({model: words, el: $("#word-add-view")});
-  new PlayView({el: $("#word-play-view")});
 
 });
