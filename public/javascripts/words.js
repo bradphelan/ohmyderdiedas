@@ -127,8 +127,6 @@ $('.page_sets_manage').live('pagecreate',function(event){
       this.list = this.el.find("ul")
       this.bindModel();
       this.model.fetch({ success: function(){self.render();}});
-      this.render();
-
     }
 
     , bindModel: function(){
