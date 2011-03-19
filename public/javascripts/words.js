@@ -112,7 +112,6 @@ $('.page_sets_manage').live('pagecreate',function(event){
 
           ,error: function(model, resp){
             $("#messages").html(resp.responseText);
-            console.log('bad');
           }
           
          }
@@ -127,15 +126,17 @@ $('.page_sets_manage').live('pagecreate',function(event){
     ,words: new Words()
 
     ,initialize: function(){
+      self=this;
       this.list = this.el.find("ul")
       this.bindModel();
-      this.model.fetch();
+      this.model.fetch({ success: function(){self.render();}});
       this.render();
 
     }
 
     , bindModel: function(){
-      _.bindAll(this, "render", "appendWord", "prependWord", "handleAddNewWord");
+      _.bindAll(this, "render", "appendWord", "prependWord");
+
       this.model.bind('add', this.prependWord);
 
     }
