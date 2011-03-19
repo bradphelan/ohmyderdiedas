@@ -8,6 +8,7 @@
     %script{:src => "http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.js"}
     %script{:src =>"http://documentcloud.github.com/underscore/underscore-min.js"}
     %script{:src =>"http://documentcloud.github.com/backbone/backbone-min.js"}
+    = javascript_include_tag 'backbone_rails3_config' #CSRF protection patch for backbone / rails3
     = javascript_include_tag 'words'
     = stylesheet_link_tag 'formtastic'
     = stylesheet_link_tag 'formtastic_changes'

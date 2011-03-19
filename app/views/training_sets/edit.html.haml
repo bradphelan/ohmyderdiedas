@@ -1,6 +1,7 @@
 %div{ :data => {:role => "content" }}
   %div(data-role="collapsible-set")
-    %div(data-role="collapsible")
+
+    %div(data-role="collapsible" id="c0")
       %h3 Edit Tags
 
       =form_for @set, :id=>"update-tags" do |f|
@@ -8,22 +9,26 @@
         = f.submit
         
 
-    %div(data-role="collapsible")
+    %div(data-role="collapsible" id="c1")
       %h3 Add Words To List
-      %form{:action => new_word_training_set_path, :id => "set-new-word", :method=>"post", :'data-remote' => true}
-        %input{:name=>"authenticity_token", :value=>form_authenticity_token, :type=>"hidden"}
-        %input{:name=>"training_set[word]", :type=>"text", :id=>"new_word_training_set"}
-      
-      %ul{:id=>"set_list",  :data => {:filter=>true, :role=> "listview", :inset=>'true', :url=>training_set_path(@set) }}
-        - @set.nouns(current_user).each do |noun|
-          %li=noun
 
-    %div(data-role="collapsible")
+      %div(id="word-add-view")
+
+        %form{:action=>"#", :method=>"post", :onsubmit=>"return false"}
+          %input{:type=>"text"}
+      
+      %div{:id=>"word-list-view"}
+
+        %ul{:id=>"set_list",  :data => {:filter=>true, :role=> "listview", :inset=>'true' }}
+
+    %div(data-role="collapsible" id="c2")
       %h3 Play
-      %div{ :data => {:role => "content" }}
-        %ul{:id=>"derdiedas",  :data => { :role=> "listview" }, 'data-url'=>random_word_training_set_path(@set)}
-          %li(data-role="list-divider")
-            %h3{:id=>"word"}
-          %li.der der
-          %li.die die
-          %li.das das
+
+      %div{:id=>"word-play-view", 'data-url'=>random_word_training_set_path(@set)}
+        %div{ :data => {:role => "content" }}
+          %ul{ :data => { :role=> "listview" }}
+            %li(data-role="list-divider")
+              %h3{:id=>"word"}
+            %li.der der
+            %li.die die
+            %li.das das

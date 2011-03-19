@@ -8,9 +8,6 @@ class TrainingSetsController < ApplicationController
     respond_to do |format|
       format.html do
       end
-      format.json do
-        render :json => @set.nouns(current_user)
-      end
     end
   end
 
@@ -40,23 +37,30 @@ class TrainingSetsController < ApplicationController
     redirect_to edit_training_set_path
   end
 
+  def words
+    @set = TrainingSet.find(params[:id])
+    respond_to do |format|
+      format.json do
+        render :json => @set.nouns(current_user)
+      end
+    end
+  end
+
   def new_word
+    pp params
     begin
       @training_set = TrainingSet.find(params[:id])
-      @word = Noun.create_from_string params['training_set']['word']
+      @word = Noun.create_from_string params['word']
       current_user.tag @word, :with => @training_set.tags, :on => :tags
     rescue Exception => e
       @error = e.to_s
     end
     respond_to do |format|
-      format.html do
-        redirect_to :back
-      end
       format.json do
         if @error
           render :text => @error, :layout => false, :status => :unprocessable_entity
         else
-          render :json => { :word => @word.to_s}, :layout => false
+          render :json => @word.to_json, :layout => false
         end
       end
     end

@@ -65,8 +65,8 @@ Derdiedas::Application.routes.draw do
   resources :training_sets do
     member do
       post 'word', :as => "new_word", :action => "new_word"
+      get  'word', :as => "words", :action => "words"
       get 'random_word'
-      get 'word' # Get word list
     end
   end
   
