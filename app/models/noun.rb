@@ -1,7 +1,8 @@
 class Noun < ActiveRecord::Base
   validates :word, :presence => true
   validates :gender, :presence => true
-  acts_as_taggable_on :tags
+  has_many :noun_training_sets
+  has_many :training_sets, :through => :noun_training_sets
 
   ARTICLES = %w(der die das)
 
@@ -19,6 +20,10 @@ class Noun < ActiveRecord::Base
       "n"
     else
       raise "'#{article}' is not a valid article"
+    end
+
+    Noun.where(:gender => gender, :word => word).each do |w|
+      return w
     end
 
     Noun.create! :gender => gender, :word => word

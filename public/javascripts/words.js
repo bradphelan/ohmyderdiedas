@@ -111,7 +111,7 @@ $('.page_sets_manage').live('pagecreate',function(event){
          );
     }
 
-    , onSuccess: function(model,resp){ }
+    , onSuccess: function(model,resp){ this.el.find("input").val(""); }
     , onError: function(model, resp){ $("#messages").html(resp.responseText); }
 
   }

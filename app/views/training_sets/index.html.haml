@@ -3,8 +3,7 @@
     %li(data-role="list-divider")Filters
     - @sets.each do |set|
       %li
-        %a{:href=>edit_training_set_path(set)}=set.tags
+        %a{:href=>edit_training_set_path(set)}=set.name
         %a{:href=>"#", 'data-icon'=>"minus"}
     %li(data-icon="plus")
-      %a(href=new_training_set_path)Add new filter
-    %li(data-role="list-divider")Tags
+      %a(href=new_training_set_path)Add new set

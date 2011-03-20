@@ -3,8 +3,7 @@ class TrainingSet < ActiveRecord::Base
   belongs_to :user
   validates :user, :presence => true
 
-  def nouns(user)
-    Noun.tagged_with tags.split(/,/).map(&:strip), :any => true, :owned_by => user
-  end
+  has_many :noun_training_sets
+  has_many :nouns, :through=> :noun_training_sets
 
 end

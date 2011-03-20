@@ -32,7 +32,7 @@ class TrainingSetsController < ApplicationController
 
   def update
     @set = TrainingSet.find(params[:id])
-    @set.tags = params[:training_set][:tags].downcase
+    @set.name = params[:training_set][:name]
     @set.save!
     redirect_to edit_training_set_path
   end
@@ -47,12 +47,16 @@ class TrainingSetsController < ApplicationController
   end
 
   def new_word
-    pp params
     begin
       @training_set = TrainingSet.find(params[:id])
-      @word = Noun.create_from_string params['word']
-      current_user.tag @word, :with => @training_set.tags, :on => :tags
+      noun = Noun.create_from_string(params['word'])
+      if @training_set.nouns.where(:word => noun.word, :gender=>noun.gender).count > 0 
+        raise "#{noun} has allready been added"
+      else
+        noun.training_sets.push @training_set
+      end
     rescue Exception => e
+      Rails.logger.error e
       @error = e.to_s
     end
     respond_to do |format|
@@ -60,7 +64,7 @@ class TrainingSetsController < ApplicationController
         if @error
           render :text => @error, :layout => false, :status => :unprocessable_entity
         else
-          render :json => @word.to_json, :layout => false
+          render :json => noun.to_json, :layout => false
         end
       end
     end

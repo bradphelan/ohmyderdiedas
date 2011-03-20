@@ -2,10 +2,10 @@
   %div(data-role="collapsible-set")
 
     %div(data-role="collapsible" id="c0")
-      %h3 Edit Tags
+      %h3 Edit Name ( #{@set.name} )
 
       =form_for @set, :id=>"update-tags" do |f|
-        = f.text_field :tags
+        = f.text_field :name
         = f.submit
         
 

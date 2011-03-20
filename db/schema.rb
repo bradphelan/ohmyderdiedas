@@ -10,7 +10,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110312201401) do
+ActiveRecord::Schema.define(:version => 20110320212018) do
+
+  create_table "noun_training_sets", :id => false, :force => true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "noun_id"
+    t.integer  "training_set_id"
+  end
 
   create_table "nouns", :force => true do |t|
     t.string "word"
@@ -42,12 +49,12 @@ ActiveRecord::Schema.define(:version => 20110312201401) do
     t.datetime "updated_at"
     t.integer  "user_id"
     t.string   "tags"
+    t.string   "name"
   end
 
   create_table "users", :force => true do |t|
     t.string   "email",                               :default => "", :null => false
     t.string   "encrypted_password",   :limit => 128, :default => "", :null => false
-    t.string   "password_salt",                       :default => "", :null => false
     t.string   "reset_password_token"
     t.string   "remember_token"
     t.datetime "remember_created_at"
