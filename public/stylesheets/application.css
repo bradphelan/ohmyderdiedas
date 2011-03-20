@@ -1,5 +1,5 @@
 .der, .der a {
-  background: green !important;
+  background: red !important;
   color: white !important;
 }
 .die, .die a {
@@ -8,7 +8,7 @@
 }
 
 .das, .das a {
-  background: red !important;
+  background: green !important;
   color: white !important;
 }
 
