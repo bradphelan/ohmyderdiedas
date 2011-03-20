@@ -52,7 +52,7 @@ $('.page_sets_manage').live('pagecreate',function(event){
     }
 
     , renderMessage: function(){
-        $("#messages").html(this.word.get('message'));
+        $("#word-message").html(this.word.get('message'));
     }
 
 
