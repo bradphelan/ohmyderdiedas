@@ -60,9 +60,9 @@ $('.page_sets_manage').live('pagecreate',function(event){
     // UI Event Handling
     // ------------------
 
-    , events: {  "click .der" : "handleDer" ,
-                 "click .die" : "handleDie" ,
-                 "click .das" : "handleDas" ,
+    , events: {  "click .der a" : "handleDer" ,
+                 "click .die a" : "handleDie" ,
+                 "click .das a" : "handleDas" ,
               }
 
     , handleDer: function(e) {
@@ -84,6 +84,7 @@ $('.page_sets_manage').live('pagecreate',function(event){
     tagName: "li"
     ,render: function() {
       $(this.el).html(this.model.get('article') + " " + this.model.get('word'));
+      $(this.el).addClass(this.model.get('article'));
       return this;
     },
   }
