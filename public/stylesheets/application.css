@@ -8,7 +8,27 @@
 }
 
 .das, .das a {
-  background: green !important;
+  background: gray !important;
   color: white !important;
 }
+
+.correct {
+  padding: 1em;
+  margin: 0.5em;
+  background: lightgreen !important;
+  color: blue !important;
+}
+
+.incorrect {
+  padding: 1em;
+  margin: 0.5em;
+  background: red !important;
+  color: yellow !important;
+}
+
+#word {
+  display: inline;
+}
+
+
 

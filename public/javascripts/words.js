@@ -8,7 +8,7 @@ $('.page_sets_manage').live('pagecreate',function(event){
 
     initialize: function() {
       this.fetch();
-      this.set({message: ''});
+      this.set({message: null});
     }
 
     ,url: function(){
@@ -18,10 +18,10 @@ $('.page_sets_manage').live('pagecreate',function(event){
     ,setAnswer: function (article){
       txt = article + " " + this.get('word');
       if (article == this.get('article')){
-        this.set({message: txt + " is correct"});
+        this.set({message: {state:true, message: txt + " is correct"}});
         this.fetch();
       }else{
-        this.set({message: txt + " is incorrect"});
+        this.set({message: {state:false,message: txt + " is incorrect"}});
       }
     }
 
@@ -44,15 +44,28 @@ $('.page_sets_manage').live('pagecreate',function(event){
       _.bindAll(this, "renderMessage", "changeWord");
       this.word.bind('change:message', this.renderMessage);
       this.word.bind('change:word', this.changeWord);
+      this.word.bind('change:state', this.changeState);
 
     }
 
-    , changeWord: function(){
+
+    ,changeWord: function(){
+        $("#word").hide();
         $("#word").html(this.word.get('word'));
+        $("#word").fadeIn();
     }
 
     , renderMessage: function(){
-        $("#word-message").html(this.word.get('message'));
+        $("#word-message").html(this.word.get('message').message);
+        if(this.word.get('message').state){
+          $("#word-message").removeClass("incorrect");
+          $("#word-message").addClass("correct");
+        }else{
+          $("#word-message").removeClass("correct");
+          $("#word-message").addClass("incorrect");
+        }
+
+
     }
 
 
