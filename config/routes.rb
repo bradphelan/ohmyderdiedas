@@ -60,7 +60,7 @@ Derdiedas::Application.routes.draw do
 
   match 'words/new(/:word)(.:format)' => "words#new", :as => 'new_word'
   match 'words/check' => "words#check", :as => "check_word"
-  root :to => "words#new"
+  root :to => "training_sets#index"
 
   resources :training_sets do
     member do
