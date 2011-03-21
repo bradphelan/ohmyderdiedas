@@ -49,12 +49,7 @@ class TrainingSetsController < ApplicationController
   def new_word
     begin
       @training_set = TrainingSet.find(params[:id])
-      noun = Noun.create_from_string(params['word'])
-      if @training_set.nouns.where(:word => noun.word, :gender=>noun.gender).count > 0 
-        raise "#{noun} has allready been added"
-      else
-        noun.training_sets.push @training_set
-      end
+      noun = @training_set.create_noun_from_string params['word']
     rescue Exception => e
       Rails.logger.error e
       @error = e.to_s
@@ -77,20 +72,24 @@ class TrainingSetsController < ApplicationController
 
     # Update the score for the previous
     # word if it is available
-    if params[:word] && params[:gender]
+    if params['word'] && params['gender']
       previous_word = Noun.where(:word=>params[:word], :gender=>params[:gender]).first
-      correct_answer = params.fetch :correct_answer, true
-      score = if correct_answer then 1 else -2 end
-      join = previous_word.noun_training_sets.where(:training_set_id => @set.id).first
-      join.score = [[join.score + score, BOUNDARY].min, -BOUNDARY].max
-      join.save!
+      previous_ts   = previous_word.noun_training_sets.where(
+        :training_set_id => @set.id, 
+        :noun_id => previous_word.id
+      ).first
+      previous_ts.score += if params['correct_answer'] then 1 else -2 end
+      previous_ts.save!
     end
 
     respond_to do |format|
       format.json do
-        word = rand_word
-        word_json = rand_word.as_json({})
-        word_json.merge!({ :score => word.noun_training_sets[0].score })
+        ts = rand_word
+        word   = ts.noun
+        word_json = word.as_json
+        # TODO fix score
+        #word_json.merge!({ :score => word.noun_training_sets[0].score })
+        word_json.merge!({ :score => ts.score })
         render :json => word_json, :layout => false
       end
     end
@@ -100,16 +99,14 @@ class TrainingSetsController < ApplicationController
   private
 
   def all_words
-    Noun.includes(:noun_training_sets).where(NounTrainingSet.arel_table[:training_set_id].eq(@set.id))
+    @set.noun_training_sets(:include => :nouns)
   end
 
   def rand_word
     words = all_words
-
     words.random_weighted do |w|
-      - w.noun_training_sets[0].score
+      - w.score
     end
-
   end
 end
 

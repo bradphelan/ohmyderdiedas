@@ -29,10 +29,8 @@ class Noun < ActiveRecord::Base
     Noun.create! :gender => gender, :word => word
   end
 
-  def as_json(x)
-    super.as_json.merge({
-      :article => article
-    })
+  def as_json(options=nil)
+    super(options).merge({ :article => article })
   end
 
 

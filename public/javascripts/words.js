@@ -29,7 +29,7 @@ $('.page_sets_manage').live('pagecreate',function(event){
         this.save({},{ success: this.resetCorrect});
       }else{
         this.set(
-          { message: {state:false,message: txt + " is incorrect"}
+          { message: {state:false, message: txt + " is incorrect"}
           , correct_answer: false
           });
       }
@@ -53,7 +53,10 @@ $('.page_sets_manage').live('pagecreate',function(event){
     , bindModel: function(){
       _.bindAll(this, "renderMessage", "changeWord");
       this.word.bind('change:message', this.renderMessage);
+
       this.word.bind('change:word', this.changeWord);
+      this.word.bind('change:score', this.changeWord);
+
       this.word.bind('change:state', this.changeState);
 
     }
