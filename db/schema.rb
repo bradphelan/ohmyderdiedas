@@ -10,13 +10,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110320212018) do
+ActiveRecord::Schema.define(:version => 20110321075757) do
 
   create_table "noun_training_sets", :id => false, :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "noun_id"
     t.integer  "training_set_id"
+    t.integer  "score",           :default => 0
   end
 
   create_table "nouns", :force => true do |t|
