@@ -24,12 +24,12 @@ $('.page_sets_manage').live('pagecreate',function(event){
       txt = article + " " + this.get('word');
       if (article == this.get('article')){
         this.set(
-          { message: {state:true, message: txt + " is correct"}
+          { message: {state:true, message: "Richtig!"}
           });
         this.save({},{ success: this.resetCorrect});
       }else{
         this.set(
-          { message: {state:false, message: txt + " is incorrect"}
+          { message: {state:false, message: "Falsch"}
           , correct_answer: false
           });
       }
