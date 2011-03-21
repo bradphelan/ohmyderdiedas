@@ -98,16 +98,41 @@ class TrainingSetsController < ApplicationController
 
   private
 
-  def all_words
+  def all_training_set_nouns
     @set.noun_training_sets(:include => :nouns)
   end
 
+
   def rand_word
-    words = all_words
-    words.random_weighted do |w|
-      - w.score
-    end
+    # Use a normal distribution to select the sample
+    # set size
+    limit = self.class.gauss_rand(5, 5, :min => 8).round
+    words = @set.noun_training_sets.order('score ASC').limit(limit).all
+
+    # Use a uniform distribution to select the word from that
+    words[rand(words.size)]
+
   end
+
+  # Box Mueller Method Of Gaussian Random number generation
+  def self.gauss_rand(mu, sigma, options = {})
+    u1 = rand
+    u2 = rand
+    z1 = Math.sqrt(-2 * Math.log(u1)) * Math.sin(2 * Math::PI * u2);
+    x1 = mu + z1 * sigma;
+
+    if options[:min]
+      x1 = [options[:min], x1].max
+    end
+
+    if options[:max]
+      x1 = [options[:max], x1].min
+    end
+
+    x1
+
+  end
+  
 end
 
 class Array
