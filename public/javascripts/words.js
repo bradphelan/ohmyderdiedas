@@ -61,7 +61,7 @@ $('.page_sets_manage').live('pagecreate',function(event){
 
     ,changeWord: function(){
         $("#word").hide();
-        $("#word").html(this.word.get('word'));
+        $("#word").html(this.word.get('word') + " (" + this.word.get('score') + ")");
         $("#word").fadeIn();
     }
 

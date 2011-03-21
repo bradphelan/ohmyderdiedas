@@ -88,7 +88,10 @@ class TrainingSetsController < ApplicationController
 
     respond_to do |format|
       format.json do
-        render :json => rand_word, :layout => false
+        word = rand_word
+        word_json = rand_word.as_json({})
+        word_json.merge!({ :score => word.noun_training_sets[0].score })
+        render :json => word_json, :layout => false
       end
     end
 
@@ -102,6 +105,36 @@ class TrainingSetsController < ApplicationController
 
   def rand_word
     words = all_words
-    words[rand(words.size)]
+
+    words.random_weighted do |w|
+      - w.noun_training_sets[0].score
+    end
+
   end
 end
+
+class Array
+  def random_weighted
+    s = self.sort do |a,b|
+      (yield a) <=> (yield b)
+    end
+
+    total = s.map do |i|
+        yield i
+    end.sum
+    
+    running_total = 0
+    index = rand(total) + 1
+
+    # TODO this is slow. Need a binary sort
+    # we assume it is already sorted in descending order, although I suppose order does not matter
+    s.each do |item|
+      running_total += yield item
+      return item if index <= running_total
+    end
+    
+    # it is possible to arrive here if all the elements had weight of zero.  Handle this:
+    return self[rand(s.size)]
+  end
+end
+
