@@ -67,6 +67,7 @@ Derdiedas::Application.routes.draw do
       post 'word', :as => "new_word", :action => "new_word"
       get  'word', :as => "words", :action => "words"
       get 'random_word'
+      put 'random_word'
     end
   end
   

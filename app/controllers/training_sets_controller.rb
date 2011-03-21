@@ -70,23 +70,25 @@ class TrainingSetsController < ApplicationController
     end
   end
 
+  BOUNDARY = 10
+
   def random_word
+    @set = TrainingSet.find(params[:id])
+
+    # Update the score for the previous
+    # word if it is available
+    if params[:word] && params[:gender]
+      previous_word = Noun.where(:word=>params[:word], :gender=>params[:gender]).first
+      correct_answer = params.fetch :correct_answer, true
+      score = if correct_answer then 1 else -2 end
+      join = previous_word.noun_training_sets.where(:training_set_id => @set.id).first
+      join.score = [[join.score + score, BOUNDARY].min, -BOUNDARY].max
+      join.save!
+    end
 
     respond_to do |format|
-        
-      if params[:word]
-        @word = {:word => params[:word]}
-      else @word = params[:word]
-        @word = rand_word
-      end
-
-      format.html do
-        render :index
-      end
-
       format.json do
-        puts @word.to_json
-        render :json => @word, :layout => false
+        render :json => rand_word, :layout => false
       end
     end
 
@@ -95,10 +97,7 @@ class TrainingSetsController < ApplicationController
   private
 
   def all_words
-    # TODO.  This should go into memcache and be flushed
-    # on update
-    @set = TrainingSet.find(params[:id])
-    @set.nouns(current_user)
+    Noun.includes(:noun_training_sets).where(NounTrainingSet.arel_table[:training_set_id].eq(@set.id))
   end
 
   def rand_word

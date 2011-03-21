@@ -7,8 +7,13 @@ $('.page_sets_manage').live('pagecreate',function(event){
   var PlayWord = Backbone.Model.extend({
 
     initialize: function() {
-      this.fetch();
       this.set({message: null});
+      this.resetCorrect();
+      _.bindAll(this, "resetCorrect")
+    }
+
+    , resetCorrect: function(){
+      this.set({correct_answer: true });
     }
 
     ,url: function(){
@@ -18,10 +23,15 @@ $('.page_sets_manage').live('pagecreate',function(event){
     ,setAnswer: function (article){
       txt = article + " " + this.get('word');
       if (article == this.get('article')){
-        this.set({message: {state:true, message: txt + " is correct"}});
-        this.fetch();
+        this.set(
+          { message: {state:true, message: txt + " is correct"}
+          });
+        this.save({},{ success: this.resetCorrect});
       }else{
-        this.set({message: {state:false,message: txt + " is incorrect"}});
+        this.set(
+          { message: {state:false,message: txt + " is incorrect"}
+          , correct_answer: false
+          });
       }
     }
 
