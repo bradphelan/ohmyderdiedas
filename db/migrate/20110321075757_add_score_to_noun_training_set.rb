@@ -4,6 +4,7 @@ class AddScoreToNounTrainingSet < ActiveRecord::Migration
 
   def self.up
     add_column :noun_training_sets, :score, :integer, :default => 0
+    NounTrainingSet.reset_column_information
     NounTrainingSet.all.each do |nt|
       nt.score = 0
       nt.save!
