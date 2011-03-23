@@ -74,9 +74,13 @@ $('.page_sets_manage').live('pagecreate',function(event){
     }
 
     ,changeWord: function(){
+        var self = this;
         //$("#word").hide();
-        $("#word-play-link").html(this.leo(this.word.get('word')));
-        $("#word-play-score").html("(" + this.word.get('score') + ")");
+        $("#word-play-link").slideUp(500, function(){
+          $("#word-play-link").html(self.leo(self.word.get('word')));
+          $("#word-play-score").html("(" + self.word.get('score') + ")");
+          $("#word-play-link").slideDown();
+        });
         //$("#word").fadeIn();
     }
 
@@ -89,8 +93,6 @@ $('.page_sets_manage').live('pagecreate',function(event){
           $("#word-play-message").removeClass("correct");
           $("#word-play-message").addClass("incorrect");
         }
-
-
     }
 
 
