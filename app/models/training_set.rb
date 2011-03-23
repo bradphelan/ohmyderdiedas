@@ -18,4 +18,8 @@ class TrainingSet < ActiveRecord::Base
     end
   end
 
+  def can_be_accessed_by? user
+    self.user == user
+  end
+
 end

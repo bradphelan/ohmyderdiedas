@@ -48,6 +48,7 @@ GEM
     arel (2.0.9)
     bcrypt-ruby (2.1.4)
     builder (2.1.2)
+    cancan (1.6.2)
     compass (0.10.6)
       haml (>= 3.0.4)
     compass-susy-plugin (0.8.1)
@@ -140,6 +141,7 @@ PLATFORMS
 
 DEPENDENCIES
   acts-as-taggable-on!
+  cancan
   compass
   compass-susy-plugin
   devise!

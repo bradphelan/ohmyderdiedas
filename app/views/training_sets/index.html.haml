@@ -1,7 +1,7 @@
 %div{ :data => {:role => "content" }}
   %ul{:id=>"set_list",  :data => {:filter=>"true", :role=> "listview" }}
     %li(data-role="list-divider")Training Sets
-    - @sets.each do |set|
+    - @training_sets.each do |set|
       %li
         %a{:href=>edit_training_set_path(set)}=set.name
         %a{:href=>"#", 'data-icon'=>"minus"}

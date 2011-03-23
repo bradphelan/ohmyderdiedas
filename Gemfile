@@ -49,3 +49,5 @@ gem 'acts-as-taggable-on', :git => 'git://github.com/bradphelan/acts-as-taggable
 
 
 gem 'formtastic'
+
+gem 'cancan'
