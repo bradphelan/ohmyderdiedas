@@ -76,19 +76,18 @@ $('.page_sets_manage').live('pagecreate',function(event){
     ,changeWord: function(){
         //$("#word").hide();
         $("#word-play-link").html(this.leo(this.word.get('word')));
-        //$("#word-play-list").listview("refresh");
-        $("#word-play-link").append("<span> (" + this.word.get('score') + ")</span>");
+        $("#word-play-score").html("(" + this.word.get('score') + ")");
         //$("#word").fadeIn();
     }
 
     , renderMessage: function(){
-        $("#word-message").html(this.word.get('message').message);
+        $("#word-play-message").html(this.word.get('message').message);
         if(this.word.get('message').state){
-          $("#word-message").removeClass("incorrect");
-          $("#word-message").addClass("correct");
+          $("#word-play-message").removeClass("incorrect");
+          $("#word-play-message").addClass("correct");
         }else{
-          $("#word-message").removeClass("correct");
-          $("#word-message").addClass("incorrect");
+          $("#word-play-message").removeClass("correct");
+          $("#word-play-message").addClass("incorrect");
         }
 
 
