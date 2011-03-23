@@ -62,10 +62,23 @@ $('.page_sets_manage').live('pagecreate',function(event){
     }
 
 
+    ,leo: function(word){
+       var url = "http://pda.leo.org/?lp=ende&lang=de&searchLoc=0&cmpType=relaxed&relink=off&sectHdr=on&spellToler=&search=" + word;
+       var link = $('<a/>');
+       link.attr('href', url);
+       link.attr('data-rel', "external");
+       link.attr('data-transition', "pop");
+       link.attr('id', "new-random-word");
+       link.text(word);
+       return link; 
+    }
+
     ,changeWord: function(){
-        $("#word").hide();
-        $("#word").html(this.word.get('word') + " (" + this.word.get('score') + ")");
-        $("#word").fadeIn();
+        //$("#word").hide();
+        $("#word-play-link").html(this.leo(this.word.get('word')));
+        //$("#word-play-list").listview("refresh");
+        $("#word-play-link").append("<span> (" + this.word.get('score') + ")</span>");
+        //$("#word").fadeIn();
     }
 
     , renderMessage: function(){
