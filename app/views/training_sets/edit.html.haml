@@ -28,7 +28,7 @@
         %div{ :data => {:role => "content" }}
           %ul{ :data => { :role=> "listview" }}
             %li(data-role="list-divider")
-              %span{:id=>"word-play-link"}
+              %a{:id=>"word-play-link", :href=>"#dict", 'data-rel'=>'dialog', "data-transition"=>"pop"}
               %span{:id=>"word-play-score"}
               %span{:id=>"word-play-message"}
             %li.der
@@ -37,3 +37,11 @@
               %a die
             %li.das
               %a das
+
+    - content_for :page do
+      %div(data-role='page' id='dict' data-rel='back' )
+        %div(data-role='header' data-theme='d' data-position='inline' role='banner')
+          %h1 Dictionary
+          %a(href='#' data-icon='delete' data-iconpos='notext' title='Close' data-theme='d' data-transition='pop' data-rel="back")
+        %div(data-role='content')
+          %iframe(src='' width='100%' height='100%')

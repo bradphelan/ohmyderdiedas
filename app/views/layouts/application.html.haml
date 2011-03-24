@@ -15,7 +15,7 @@
     = stylesheet_link_tag 'application'
     = csrf_meta_tag
   %body
-    %div{:class => @page, "data-role" => "page"}
+    %div{:class => @page, "data-role" => "page", :id => @page}
 
       -flash.each do |type, message|
         %div{:class => "#{type} ui-body ui-body-e"}=flash[type]
@@ -36,3 +36,5 @@
       %div{:id=>"messages", :class=>"ui-body ui-body-e"}
     
       = yield
+
+    = yield :page

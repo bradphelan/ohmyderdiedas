@@ -1,4 +1,10 @@
-$('.page_sets_manage').live('pagecreate',function(event){
+$('#dict').live('pageshow',function(event){
+  var word = $("#word-play-link").text();
+  var url = "http://pda.leo.org/?lp=ende&lang=de&searchLoc=0&cmpType=relaxed&relink=off&sectHdr=on&spellToler=&search=" + word;
+  $("iframe").attr('src', url);
+});
+
+$('#page_sets_manage').live('pagecreate',function(event){
 
   // Source of words. Generates JSON data of
   // the form
@@ -62,26 +68,19 @@ $('.page_sets_manage').live('pagecreate',function(event){
     }
 
 
-    ,leo: function(word){
-       var url = "http://pda.leo.org/?lp=ende&lang=de&searchLoc=0&cmpType=relaxed&relink=off&sectHdr=on&spellToler=&search=" + word;
-       var link = $('<a/>');
-       link.attr('href', url);
-       link.attr('data-rel', "external");
-       link.attr('data-transition', "pop");
-       link.attr('id', "new-random-word");
+    ,dict: function(){
+       var link = $("#word-play-link");
+       var word = this.word.get('word');
        link.text(word);
-       return link; 
     }
 
     ,changeWord: function(){
         var self = this;
-        //$("#word").hide();
         $("#word-play-link").slideUp(500, function(){
-          $("#word-play-link").html(self.leo(self.word.get('word')));
+          self.dict();
           $("#word-play-score").html("(" + self.word.get('score') + ")");
           $("#word-play-link").slideDown();
         });
-        //$("#word").fadeIn();
     }
 
     , renderMessage: function(){
@@ -158,6 +157,7 @@ $('.page_sets_manage').live('pagecreate',function(event){
   }
   );
 
+
   var WordListView = Backbone.View.extend({
     list: null
 
@@ -202,13 +202,15 @@ $('.page_sets_manage').live('pagecreate',function(event){
   }
   );
 
+
   // Attach the view to an element
   words = new Words({
     url: $("#word-list-view").data('url')
   }
   );
-  new PlayView({model: words, el: $("#word-play-view")});
+  new PlayView({model: words, el: $("#word-play-view"), leoView: this.leoView});
   new WordListView({model: words, el: $("#word-list-view")});
   new WordAddView({model: words, el: $("#word-add-view")});
+  
 
 });
