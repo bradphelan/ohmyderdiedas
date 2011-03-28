@@ -25,18 +25,17 @@
       %h3 Play
 
       %div{:id=>"word-play-view", 'data-url'=>random_word_training_set_path(@training_set)}
-        %div{ :data => {:role => "content" }}
-          %ul{ :data => { :role=> "listview" }}
-            %li(data-role="list-divider")
-              %a{:id=>"word-play-link", :href=>"#dict", 'data-rel'=>'dialog', "data-transition"=>"pop"}
-              %span{:id=>"word-play-score"}
-              %span{:id=>"word-play-message"}
-            %li.der
-              %a der
-            %li.die 
-              %a die
-            %li.das
-              %a das
+        %ul{ :data => {:inset=>"true", :role=> "listview" }}
+          %li(data-role="list-divider")
+            %a{:id=>"word-play-link", :href=>"#dict", 'data-rel'=>'dialog', "data-transition"=>"pop"}
+            %span{:id=>"word-play-score"}
+            %span{:id=>"word-play-message"}
+          %li.der
+            %a der
+          %li.die 
+            %a die
+          %li.das
+            %a das
 
     - content_for :page do
       %div(data-role='page' id='dict' data-rel='back' )
