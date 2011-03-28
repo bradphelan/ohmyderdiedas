@@ -71,7 +71,7 @@ $('#page_sets_manage').live('pagecreate',function(event){
     ,changeWord: function(){
         var self = this;
         $("#word-play-link").slideUp(100, function(){
-          $("#word-play-link").text(this.word.get('word'));
+          $("#word-play-link").text(self.word.get('word'));
           $("#word-play-score").html("(" + self.word.get('score') + ")");
           $("#word-play-link").slideDown();
         });
