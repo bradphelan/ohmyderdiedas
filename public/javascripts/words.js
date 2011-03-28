@@ -100,15 +100,25 @@ $('#page_sets_manage').live('pagecreate',function(event){
 
     , handleDer: function(e) {
       this.word.setAnswer('der');
+      this.flashMessage();
     }
     , handleDie: function(e) {
       this.word.setAnswer('die');
+      this.flashMessage();
     }
     , handleDas: function(e) {
       this.word.setAnswer('das');
+      this.flashMessage();
     }
+    , flashMessage: function() {
 
+        $("#word-play-message").fadeOut(100, function(){
+          $("#word-play-message").fadeIn(100);
+        });
+
+    }
   });
+
 
   var Word = Backbone.Model.extend({
   });
