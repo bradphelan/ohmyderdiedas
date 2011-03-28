@@ -60,21 +60,13 @@ $('#page_sets_manage').live('pagecreate',function(event){
 
     , bindModel: function(){
       _.bindAll(this, "renderMessage", "changeWord");
-      this.word.bind('change:message', this.renderMessage);
 
+      this.word.bind('change:message', this.renderMessage);
       this.word.bind('change:word', this.changeWord);
       this.word.bind('change:score', this.changeWord);
 
-      this.word.bind('change:state', this.changeState);
-
     }
 
-
-    ,dict: function(){
-       var link = $("#word-play-link");
-       var word = this.word.get('word');
-       link.text(word);
-    }
 
     ,changeWord: function(){
         var self = this;
