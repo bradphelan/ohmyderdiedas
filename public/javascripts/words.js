@@ -1,3 +1,5 @@
+// Every time the leo page is shown we want to refresh
+// the IFrame that points to leo dictionary
 $('#dict').live('pageshow',function(event){
   var word = $("#word-play-link").text();
   var url = "http://pda.leo.org/?lp=ende&lang=de&searchLoc=0&cmpType=relaxed&relink=off&sectHdr=on&spellToler=&search=" + word;
