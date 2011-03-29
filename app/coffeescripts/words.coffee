@@ -36,6 +36,10 @@ class PlayView extends Backbone.View
         @word.fetch()
   
     bindModel: ->
+        # Note that we bind anonymous functions
+        # built with => to capture 'this'. If we just
+        # passed in the method pointer ie @renderMessage
+        # we would lose 'this'
         @word.bind 'change:message' , => @renderMessage()
         @word.bind 'change:word'    , => @changeWord()
         @word.bind 'change:score'   , => @changeWord()
