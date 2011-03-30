@@ -37,6 +37,16 @@
           %li.das
             %a das
 
+      :javascript
+        window.googleAfmcRequest = {
+          client: 'ca-mb-pub-2711385650775404',
+          format: '320x50_mb',
+          output: 'html',
+          slotname: '9402521691',
+        };
+      %script(type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_afmc_ads.js")
+            
+
     - content_for :page do
       %div(data-role='page' id='dict' data-rel='back' )
         %div(data-role='header' data-theme='d' data-position='inline' role='banner')
