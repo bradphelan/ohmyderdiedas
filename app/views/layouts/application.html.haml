@@ -9,7 +9,7 @@
     %script{:src =>"http://documentcloud.github.com/underscore/underscore.js"}
     %script{:src =>"http://documentcloud.github.com/backbone/backbone.js"}
     = javascript_include_tag 'backbone_rails3_config' #CSRF protection patch for backbone / rails3
-    = javascript_include_tag 'words'
+    = yield :javascript
     = stylesheet_link_tag 'formtastic'
     = stylesheet_link_tag 'formtastic_changes'
     = stylesheet_link_tag 'application'

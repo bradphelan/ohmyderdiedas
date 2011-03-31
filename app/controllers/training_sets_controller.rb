@@ -60,25 +60,28 @@ class TrainingSetsController < ApplicationController
   def random_word
     # Update the score for the previous
     # word if it is available
+=begin
     if params['word'] && params['gender']
       previous_word = Noun.where(:word=>params[:word], :gender=>params[:gender]).first
       previous_ts   = previous_word.noun_training_sets.where(
         :training_set_id => @training_set.id, 
         :noun_id => previous_word.id
       ).first
-      previous_ts.score += if params['correct_answer'] then 1 else -2 end
+      previous_ts.score += if not params['error'] then 1 else -2 end
       previous_ts.save!
     end
+=end
 
+    size = params['number'].to_i
     respond_to do |format|
       format.json do
-        ts = rand_word
-        word   = ts.noun
-        word_json = word.as_json
-        # TODO fix score
-        #word_json.merge!({ :score => word.noun_training_sets[0].score })
-        word_json.merge!({ :score => ts.score })
-        render :json => word_json, :layout => false
+        ts = rand_words(size).map do |t|
+          w = t.noun
+          wj = w.as_json
+          wj.merge!({ :id => t.id, :score => t.score, :error => false })
+          wj
+        end
+        render :json => ts, :layout => false
       end
     end
 
@@ -90,6 +93,10 @@ class TrainingSetsController < ApplicationController
     @training_set.noun_training_sets(:include => :nouns)
   end
 
+
+  def rand_words number
+    @training_set.noun_training_sets(:include => :nouns).order('score ASC').limit(number).all
+  end
 
   def rand_word
     # Use a normal distribution to select the sample

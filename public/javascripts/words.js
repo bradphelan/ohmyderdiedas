@@ -1,9 +1,9 @@
-/* DO NOT MODIFY. This file was compiled Wed, 30 Mar 2011 07:43:24 GMT from
+/* DO NOT MODIFY. This file was compiled Thu, 31 Mar 2011 09:20:26 GMT from
  * /Users/bradphelan/workspace/derdiedas/app/coffeescripts/words.coffee
  */
 
 (function() {
-  var PlayView, PlayWord, Word, WordAddView, WordListView, WordView, Words, app;
+  var GameEngine, PlayView, RandomWord, RandomWordCollection, Word, WordAddView, WordListView, WordView, Words, app;
   var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
@@ -12,78 +12,109 @@
     child.__super__ = parent.prototype;
     return child;
   }, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-  PlayWord = (function() {
-    __extends(PlayWord, Backbone.Model);
-    function PlayWord() {
-      PlayWord.__super__.constructor.apply(this, arguments);
-      this.set({
-        message: null
-      });
-      this.resetCorrect();
+  RandomWord = (function() {
+    function RandomWord() {
+      RandomWord.__super__.constructor.apply(this, arguments);
     }
-    PlayWord.prototype.resetCorrect = function() {
-      return this.set({
-        correct_answer: true
-      });
-    };
-    PlayWord.prototype.url = 'random_word';
-    PlayWord.prototype.setAnswer = function(article) {
-      var txt;
-      txt = article + " " + this.get('word');
+    __extends(RandomWord, Backbone.Model);
+    RandomWord.prototype.setAnswer = function(article) {
       if (article === this.get('article')) {
+        this.save();
+        return true;
+      } else {
         this.set({
-          message: {
-            state: true,
-            message: "Richtig!"
-          }
+          error: true
         });
-        return this.save({}, {
-          success: this.resetCorrect
+        return false;
+      }
+    };
+    return RandomWord;
+  })();
+  RandomWordCollection = (function() {
+    __extends(RandomWordCollection, Backbone.Collection);
+    RandomWordCollection.prototype.url = function() {
+      var params;
+      params = {
+        number: 10
+      };
+      return "random_word?" + ($.param(params));
+    };
+    RandomWordCollection.prototype.model = RandomWord;
+    function RandomWordCollection(callback) {
+      RandomWordCollection.__super__.constructor.apply(this, arguments);
+    }
+    return RandomWordCollection;
+  })();
+  GameEngine = (function() {
+    __extends(GameEngine, Backbone.Model);
+    function GameEngine() {
+      GameEngine.__super__.constructor.apply(this, arguments);
+      this._load();
+    }
+    GameEngine.prototype._load = function() {
+      if (!(this.words != null) || this.words.size() === 0) {
+        this.words = new RandomWordCollection;
+        this.words.bind('refresh', __bind(function() {
+          var word;
+          word = this.words.at(0);
+          this.words.remove(word);
+          this.current_word = word;
+          return this.trigger("change:word");
+        }, this));
+        return this.words.fetch();
+      }
+    };
+    GameEngine.prototype.setAnswer = function(article) {
+      if (this.current_word.setAnswer(article)) {
+        this.set({
+          correct_answer: true
         });
+        return this._load();
       } else {
         return this.set({
-          message: {
-            state: false,
-            message: "Falsch"
-          },
           correct_answer: false
         });
       }
     };
-    return PlayWord;
+    GameEngine.prototype.word = function() {
+      return this.current_word.get('word');
+    };
+    GameEngine.prototype.score = function() {
+      return this.current_word.get('score');
+    };
+    return GameEngine;
   })();
   PlayView = (function() {
     __extends(PlayView, Backbone.View);
-    PlayView.prototype.word = new PlayWord();
     function PlayView() {
       PlayView.__super__.constructor.apply(this, arguments);
-      this.bindModel();
-      this.word.fetch();
+      this.game_engine = new GameEngine();
+      this._bindModel();
     }
-    PlayView.prototype.bindModel = function() {
-      this.word.bind('change:message', __bind(function() {
+    PlayView.prototype._bindModel = function() {
+      this.game_engine.bind('change:word', __bind(function() {
+        alert('xxx');
+        return this.changeWord();
+      }, this));
+      return this.game_engine.bind('change:correct_answer', __bind(function() {
+        alert('yyy');
         return this.renderMessage();
-      }, this));
-      this.word.bind('change:word', __bind(function() {
-        return this.changeWord();
-      }, this));
-      return this.word.bind('change:score', __bind(function() {
-        return this.changeWord();
       }, this));
     };
     PlayView.prototype.changeWord = function() {
       return $("#word-play-link").slideUp(100, __bind(function() {
-        $("#word-play-link").text(this.word.get('word'));
-        $("#word-play-score").html("(" + this.word.get('score') + ")");
+        $("#word-play-link").text(this.game_engine.word());
+        $("#word-play-score").html("(" + this.game_engine.score() + ")");
         return $("#word-play-link").slideDown();
       }, this));
     };
     PlayView.prototype.renderMessage = function() {
-      $("#word-play-message").html(this.word.get('message').message);
-      if (this.word.get('message').state) {
+      if (this.game_engine.correct_answer()) {
+        $("#word-play-message").html('Richtig');
         $("#word-play-message").removeClass("incorrect");
         return $("#word-play-message").addClass("correct");
       } else {
+        $("#word-play-message").html('Falsch');
         $("#word-play-message").removeClass("correct");
         return $("#word-play-message").addClass("incorrect");
       }
@@ -94,15 +125,15 @@
       "click .das a": "handleDas"
     };
     PlayView.prototype.handleDer = function(e) {
-      this.word.setAnswer('der');
+      this.game_engine.setAnswer('der');
       return this.flashMessage();
     };
     PlayView.prototype.handleDie = function(e) {
-      this.word.setAnswer('die');
+      this.game_engine.setAnswer('die');
       return this.flashMessage();
     };
     PlayView.prototype.handleDas = function(e) {
-      this.word.setAnswer('das');
+      this.game_engine.setAnswer('das');
       return this.flashMessage();
     };
     PlayView.prototype.flashMessage = function() {
@@ -182,7 +213,11 @@
       });
     }
     WordListView.prototype.bindModel = function() {
-      return this.model.bind('add', this.prependWord);
+      if (this.model != null) {
+        return this.model.bind('add', this.prependWord);
+      } else {
+        return alert('model not provided at WordListView#bindModel');
+      }
     };
     WordListView.prototype.refresh = function() {
       return this.list.listview("refresh");

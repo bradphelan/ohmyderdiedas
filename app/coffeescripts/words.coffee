@@ -1,61 +1,88 @@
-class PlayWord extends Backbone.Model
+# Has fields
+# - word
+# - gender
+# - article
+# - score
+# - error
+
+class RandomWord extends Backbone.Model
+    setAnswer: (article)->
+        if (article == @get('article'))
+            @save()
+            true
+        else
+            @set error: true
+            false
+
+
+class RandomWordCollection extends Backbone.Collection
+    url: ->
+        params =
+            number: 10
+
+        "random_word?#{$.param params}"
+
+    model: RandomWord
+
+    constructor: (callback)->
+        super
+
+class GameEngine extends Backbone.Model
+
     constructor: ->
         super
-        @set
-            message:null
-        @resetCorrect()
-    
-    resetCorrect: ->
-        @set correct_answer: true
+        @_load()
 
-    url: 'random_word'
+    _load: ->
+        if not @words? || @words.size() == 0
+            @words = new RandomWordCollection
+            @words.bind 'refresh', =>
+                word = @words.at(0)
+                @words.remove(word)
+                @current_word = word
+                @trigger "change:current_word"
 
-    setAnswer: (article) ->
-      txt = article + " " + @get('word')
-      if (article == @get('article'))
-        @set
-          message:
-              state:true
-              message: "Richtig!"
-        @save({},{ success: @resetCorrect})
-      else
-        @set
-          message:
-              state:false
-              message: "Falsch"
-          correct_answer: false
 
-        
+    setAnswer: (article)->
+        if @current_word.setAnswer article
+            @set correct_answer: true
+            @_load()
+        else
+            @set correct_answer: false
+
+    word: ->
+        @current_word.get('word')
+
+    score: ->
+        @current_word.get('score')
+
+
 class PlayView extends Backbone.View
 
-    word: new PlayWord()
-
     constructor: ->
         super
-        @bindModel()
-        @word.fetch()
+        @game_engine = new GameEngine()
+        @_bindModel()
   
-    bindModel: ->
-        # Note that we bind anonymous functions
-        # built with => to capture 'this'. If we just
-        # passed in the method pointer ie @renderMessage
-        # we would lose 'this'
-        @word.bind 'change:message' , => @renderMessage()
-        @word.bind 'change:word'    , => @changeWord()
-        @word.bind 'change:score'   , => @changeWord()
+    _bindModel: ->
+        @game_engine.bind 'change:current_word', =>
+            @changeWord()
+        @game_engine.bind 'change:correct_answer', => 
+            @renderMessage()
 
     changeWord: ->
         $("#word-play-link").slideUp 100, =>
-            $("#word-play-link").text(@word.get('word'))
-            $("#word-play-score").html("(" + @word.get('score') + ")")
+            $("#word-play-link").text(@game_engine.word())
+            $("#word-play-score").html("(" + @game_engine.score() + ")")
             $("#word-play-link").slideDown()
 
     renderMessage: ->
-        $("#word-play-message").html(@word.get('message').message)
-        if @word.get('message').state
+        if @game_engine.correct_answer()
+            $("#word-play-message").html('Richtig')
             $("#word-play-message").removeClass("incorrect")
             $("#word-play-message").addClass("correct")
         else
+            $("#word-play-message").html('Falsch')
             $("#word-play-message").removeClass("correct")
             $("#word-play-message").addClass("incorrect")
 
@@ -66,15 +93,15 @@ class PlayView extends Backbone.View
         "click .das a" : "handleDas"
 
     handleDer: (e)->
-        @word.setAnswer('der')
+        @game_engine.setAnswer('der')
         @flashMessage()
 
     handleDie: (e)->
-        @word.setAnswer('die')
+        @game_engine.setAnswer('die')
         @flashMessage()
 
     handleDas: (e)->
-        @word.setAnswer('das')
+        @game_engine.setAnswer('das')
         @flashMessage()
 
     flashMessage: ->
@@ -128,7 +155,10 @@ class WordListView extends Backbone.View
                 @render()
 
     bindModel: ->
-        @model.bind('add', @prependWord)
+        if @model?
+            @model.bind('add', @prependWord)
+        else
+            alert('model not provided at WordListView#bindModel')
 
     refresh: ->
         @list.listview("refresh")
