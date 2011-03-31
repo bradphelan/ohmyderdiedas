@@ -1,3 +1,7 @@
+if not Math.randomFromTo?
+       Math.randomFromTo = (from, to) ->
+           Math.floor(Math.random() * (to - from + 1) + from)
+
 # Has fields
 # - word
 # - gender
@@ -8,21 +12,24 @@
 class RandomWord extends Backbone.Model
     setAnswer: (article)->
         if (article == @get('article'))
-            @save()
+            increment = if @get('error') then -2 else 1
+            @set score: @get('score') + increment
             true
         else
             @set error: true
             false
 
+    score: -> @get 'score'
+
 
 class RandomWordCollection extends Backbone.Collection
     url: ->
-        params =
-            number: 10
-
-        "random_word?#{$.param params}"
+        "random_word"
 
     model: RandomWord
+
+    at_random: ->
+        @at Math.randomFromTo(0, @size()-1)
 
     constructor: (callback)->
         super
@@ -35,26 +42,36 @@ class GameEngine extends Backbone.Model
 
     _load: ->
         if not @words? || @words.size() == 0
-            @words = new RandomWordCollection
-            @words.bind 'refresh', =>
-                word = @words.at(0)
-                @words.remove(word)
-                @current_word = word
-                @trigger "change:current_word"
+            @words = new RandomWordCollection()
+            @words.bind 'refresh', => @_refresh()
+            @words.fetch()
+
+    _refresh: ->
+        @set current_word: @words.at_random()
+        # This is needed because we might
+        # select the same word again which
+        # will not trigger an event
+        @trigger('change:word')
+
+    current_word: ->
+        @get('current_word')
 
 
     setAnswer: (article)->
-        if @current_word.setAnswer article
+        if @current_word().setAnswer article
             @set correct_answer: true
-            @_load()
+            @_refresh()
         else
             @set correct_answer: false
 
     word: ->
-        @current_word.get('word')
+        @current_word().get('word')
 
     score: ->
-        @current_word.get('score')
+        @current_word().get('score')
+
+    correct_answer: ->
+        @get 'correct_answer'
 
 
 class PlayView extends Backbone.View
@@ -65,16 +82,14 @@ class PlayView extends Backbone.View
         @_bindModel()
   
     _bindModel: ->
-        @game_engine.bind 'change:current_word', =>
+        @game_engine.bind 'change:word', =>
             @changeWord()
-        @game_engine.bind 'change:correct_answer', => 
+        @game_engine.bind 'change:correct_answer', =>
             @renderMessage()
 
     changeWord: ->
-        $("#word-play-link").slideUp 100, =>
-            $("#word-play-link").text(@game_engine.word())
-            $("#word-play-score").html("(" + @game_engine.score() + ")")
-            $("#word-play-link").slideDown()
+        $("#word-play-link").text(@game_engine.word())
+        $("#word-play-score").html("(" + @game_engine.score() + ")")
 
     renderMessage: ->
         if @game_engine.correct_answer()
@@ -105,8 +120,8 @@ class PlayView extends Backbone.View
         @flashMessage()
 
     flashMessage: ->
-        $("#word-play-message").fadeOut 100, =>
-            $("#word-play-message").fadeIn(100)
+        $("#word-play-message").hide()
+        $("#word-play-message").fadeIn(1000)
 
 
 class Word extends Backbone.Model
@@ -155,10 +170,7 @@ class WordListView extends Backbone.View
                 @render()
 
     bindModel: ->
-        if @model?
-            @model.bind('add', @prependWord)
-        else
-            alert('model not provided at WordListView#bindModel')
+        @model.bind('add', @prependWord)
 
     refresh: ->
         @list.listview("refresh")

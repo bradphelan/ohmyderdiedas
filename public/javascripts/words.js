@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Thu, 31 Mar 2011 09:20:26 GMT from
+/* DO NOT MODIFY. This file was compiled Thu, 31 Mar 2011 21:40:48 GMT from
  * /Users/bradphelan/workspace/derdiedas/app/coffeescripts/words.coffee
  */
 
@@ -12,14 +12,23 @@
     child.__super__ = parent.prototype;
     return child;
   }, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  if (!(Math.randomFromTo != null)) {
+    Math.randomFromTo = function(from, to) {
+      return Math.floor(Math.random() * (to - from + 1) + from);
+    };
+  }
   RandomWord = (function() {
     function RandomWord() {
       RandomWord.__super__.constructor.apply(this, arguments);
     }
     __extends(RandomWord, Backbone.Model);
     RandomWord.prototype.setAnswer = function(article) {
+      var increment;
       if (article === this.get('article')) {
-        this.save();
+        increment = this.get('error') ? -2 : 1;
+        this.set({
+          score: this.get('score') + increment
+        });
         return true;
       } else {
         this.set({
@@ -28,18 +37,20 @@
         return false;
       }
     };
+    RandomWord.prototype.score = function() {
+      return this.get('score');
+    };
     return RandomWord;
   })();
   RandomWordCollection = (function() {
     __extends(RandomWordCollection, Backbone.Collection);
     RandomWordCollection.prototype.url = function() {
-      var params;
-      params = {
-        number: 10
-      };
-      return "random_word?" + ($.param(params));
+      return "random_word";
     };
     RandomWordCollection.prototype.model = RandomWord;
+    RandomWordCollection.prototype.at_random = function() {
+      return this.at(Math.randomFromTo(0, this.size() - 1));
+    };
     function RandomWordCollection(callback) {
       RandomWordCollection.__super__.constructor.apply(this, arguments);
     }
@@ -53,23 +64,28 @@
     }
     GameEngine.prototype._load = function() {
       if (!(this.words != null) || this.words.size() === 0) {
-        this.words = new RandomWordCollection;
+        this.words = new RandomWordCollection();
         this.words.bind('refresh', __bind(function() {
-          var word;
-          word = this.words.at(0);
-          this.words.remove(word);
-          this.current_word = word;
-          return this.trigger("change:word");
+          return this._refresh();
         }, this));
         return this.words.fetch();
       }
     };
+    GameEngine.prototype._refresh = function() {
+      this.set({
+        current_word: this.words.at_random()
+      });
+      return this.trigger('change:word');
+    };
+    GameEngine.prototype.current_word = function() {
+      return this.get('current_word');
+    };
     GameEngine.prototype.setAnswer = function(article) {
-      if (this.current_word.setAnswer(article)) {
+      if (this.current_word().setAnswer(article)) {
         this.set({
           correct_answer: true
         });
-        return this._load();
+        return this._refresh();
       } else {
         return this.set({
           correct_answer: false
@@ -77,10 +93,13 @@
       }
     };
     GameEngine.prototype.word = function() {
-      return this.current_word.get('word');
+      return this.current_word().get('word');
     };
     GameEngine.prototype.score = function() {
-      return this.current_word.get('score');
+      return this.current_word().get('score');
+    };
+    GameEngine.prototype.correct_answer = function() {
+      return this.get('correct_answer');
     };
     return GameEngine;
   })();
@@ -93,20 +112,15 @@
     }
     PlayView.prototype._bindModel = function() {
       this.game_engine.bind('change:word', __bind(function() {
-        alert('xxx');
         return this.changeWord();
       }, this));
       return this.game_engine.bind('change:correct_answer', __bind(function() {
-        alert('yyy');
         return this.renderMessage();
       }, this));
     };
     PlayView.prototype.changeWord = function() {
-      return $("#word-play-link").slideUp(100, __bind(function() {
-        $("#word-play-link").text(this.game_engine.word());
-        $("#word-play-score").html("(" + this.game_engine.score() + ")");
-        return $("#word-play-link").slideDown();
-      }, this));
+      $("#word-play-link").text(this.game_engine.word());
+      return $("#word-play-score").html("(" + this.game_engine.score() + ")");
     };
     PlayView.prototype.renderMessage = function() {
       if (this.game_engine.correct_answer()) {
@@ -137,9 +151,8 @@
       return this.flashMessage();
     };
     PlayView.prototype.flashMessage = function() {
-      return $("#word-play-message").fadeOut(100, __bind(function() {
-        return $("#word-play-message").fadeIn(100);
-      }, this));
+      $("#word-play-message").hide();
+      return $("#word-play-message").fadeIn(1000);
     };
     return PlayView;
   })();
@@ -213,11 +226,7 @@
       });
     }
     WordListView.prototype.bindModel = function() {
-      if (this.model != null) {
-        return this.model.bind('add', this.prependWord);
-      } else {
-        return alert('model not provided at WordListView#bindModel');
-      }
+      return this.model.bind('add', this.prependWord);
     };
     WordListView.prototype.refresh = function() {
       return this.list.listview("refresh");

@@ -72,16 +72,15 @@ class TrainingSetsController < ApplicationController
     end
 =end
 
-    size = params['number'].to_i
     respond_to do |format|
       format.json do
-        ts = rand_words(size).map do |t|
+        ts = all_training_set_nouns.map do |t|
           w = t.noun
           wj = w.as_json
           wj.merge!({ :id => t.id, :score => t.score, :error => false })
           wj
         end
-        render :json => ts, :layout => false
+        render :json => ts, :layout => false, :status => 200
       end
     end
 
@@ -90,24 +89,9 @@ class TrainingSetsController < ApplicationController
   private
 
   def all_training_set_nouns
-    @training_set.noun_training_sets(:include => :nouns)
+    @training_set.noun_training_sets(:include => :nouns).order('score ASC')
   end
 
-
-  def rand_words number
-    @training_set.noun_training_sets(:include => :nouns).order('score ASC').limit(number).all
-  end
-
-  def rand_word
-    # Use a normal distribution to select the sample
-    # set size
-    limit = self.class.gauss_rand(5, 5, :min => 8).round
-    words = @training_set.noun_training_sets.order('score ASC').limit(limit).all
-
-    # Use a uniform distribution to select the word from that
-    words[rand(words.size)]
-
-  end
 
   # Box Mueller Method Of Gaussian Random number generation
   def self.gauss_rand(mu, sigma, options = {})
