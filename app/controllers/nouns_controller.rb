@@ -19,9 +19,10 @@ class NounsController < ApplicationController
     :through => :training_set, 
     :except => [:index, :new, :create]
 
-  def new
+  def create
     begin
       noun = @training_set.create_noun_from_string params['word']
+      noun_ts = noun.noun_training_sets.where(:training_set_id => @training_set.id).first
     rescue Exception => e
       Rails.logger.error e
       @error = e.to_s
@@ -30,7 +31,7 @@ class NounsController < ApplicationController
     if @error
       render :text => @error, :layout => false, :status => :unprocessable_entity
     else
-      render :json => noun.to_json, :layout => false
+      render :json => make_json(noun_ts), :layout => false, :status => :ok
     end
   end
 
@@ -53,9 +54,11 @@ class NounsController < ApplicationController
   private
 
   def make_json nts
-      w = nts.noun
-      wj = w.as_json
-      wj.merge!({ :id => nts.id, :score => nts.score, :error => false })
+    # Note we wish to use the ID of the noun_training_set object
+    # not the word
+    w = nts.noun
+    wj = w.as_json
+    wj.merge!({ :id => nts.id, :score => nts.score, :error => false })
   end
 
   def all_training_set_nouns

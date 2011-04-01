@@ -117,8 +117,6 @@ class PlayView extends Backbone.View
         $("#word-play-message").fadeIn(1000)
 
 
-class Word extends Backbone.Model
-
 class WordView extends Backbone.View
     tagName: "li"
 
@@ -128,7 +126,7 @@ class WordView extends Backbone.View
       return this
 
 class Words extends Backbone.Collection
-    model: Word
+    model: RandomWord
     url: 'nouns'
 
 class WordAddView extends Backbone.View
@@ -136,13 +134,13 @@ class WordAddView extends Backbone.View
     events: {"submit form" : "addItem"}
 
     addItem : (data)->
-        @model.create [
-           { word: $(@el).find("input").val()
-           }
-           { success: @onSuccess
-             error: @onError
-           }
-        ]
+        item =
+            word: $(@el).find("input").val()
+        callbacks =
+            success: @onSuccess
+            error: @onError
+
+        @model.create item, callbacks
 
     onSuccess: (model,resp)->
         $(@el).find("input").val("")
@@ -163,7 +161,7 @@ class WordListView extends Backbone.View
                 @render()
 
     bindModel: ->
-        @model.bind('add', @prependWord)
+        @model.bind 'add', (noun)=> @prependWord(noun)
 
     refresh: ->
         @list.listview("refresh")

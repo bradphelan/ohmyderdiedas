@@ -1,9 +1,9 @@
-/* DO NOT MODIFY. This file was compiled Fri, 01 Apr 2011 16:04:49 GMT from
+/* DO NOT MODIFY. This file was compiled Fri, 01 Apr 2011 16:56:48 GMT from
  * /Users/bradphelan/workspace/derdiedas/app/coffeescripts/words.coffee
  */
 
 (function() {
-  var GameEngine, PlayView, RandomWord, RandomWordCollection, Word, WordAddView, WordListView, WordView, Words, app;
+  var GameEngine, PlayView, RandomWord, RandomWordCollection, WordAddView, WordListView, WordView, Words, app;
   var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
@@ -153,13 +153,6 @@
     };
     return PlayView;
   })();
-  Word = (function() {
-    function Word() {
-      Word.__super__.constructor.apply(this, arguments);
-    }
-    __extends(Word, Backbone.Model);
-    return Word;
-  })();
   WordView = (function() {
     function WordView() {
       WordView.__super__.constructor.apply(this, arguments);
@@ -178,7 +171,7 @@
       Words.__super__.constructor.apply(this, arguments);
     }
     __extends(Words, Backbone.Collection);
-    Words.prototype.model = Word;
+    Words.prototype.model = RandomWord;
     Words.prototype.url = 'nouns';
     return Words;
   })();
@@ -191,15 +184,15 @@
       "submit form": "addItem"
     };
     WordAddView.prototype.addItem = function(data) {
-      return this.model.create([
-        {
-          word: $(this.el).find("input").val()
-        }, {
-          success: this.onSuccess({
-            error: this.onError
-          })
-        }
-      ]);
+      var callbacks, item;
+      item = {
+        word: $(this.el).find("input").val()
+      };
+      callbacks = {
+        success: this.onSuccess,
+        error: this.onError
+      };
+      return this.model.create(item, callbacks);
     };
     WordAddView.prototype.onSuccess = function(model, resp) {
       return $(this.el).find("input").val("");
@@ -223,7 +216,9 @@
       });
     }
     WordListView.prototype.bindModel = function() {
-      return this.model.bind('add', this.prependWord);
+      return this.model.bind('add', __bind(function(noun) {
+        return this.prependWord(noun);
+      }, this));
     };
     WordListView.prototype.refresh = function() {
       return this.list.listview("refresh");
