@@ -58,17 +58,24 @@ Derdiedas::Application.routes.draw do
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id(.:format)))'
 
-  match 'words/new(/:word)(.:format)' => "words#new", :as => 'new_word'
-  match 'words/check' => "words#check", :as => "check_word"
   root :to => "training_sets#index"
 
   resources :training_sets do
+    resources :nouns do
+      collection do
+        get 'random'
+      end
+    end
+
+=begin
     member do
       post 'word', :as => "new_word", :action => "new_word"
       get  'word', :as => "words", :action => "words"
       get 'random_word'
       put 'random_word'
     end
+    resources :random_word
+=end
   end
   
 end

@@ -14,6 +14,7 @@ class RandomWord extends Backbone.Model
         if (article == @get('article'))
             increment = if @get('error') then -2 else 1
             @set score: @get('score') + increment
+            @save()
             true
         else
             @set error: true
@@ -23,28 +24,22 @@ class RandomWord extends Backbone.Model
 
 
 class RandomWordCollection extends Backbone.Collection
-    url: ->
-        "random_word"
+    url: "nouns"
 
     model: RandomWord
 
     at_random: ->
         @at Math.randomFromTo(0, @size()-1)
 
-    constructor: (callback)->
-        super
-
 class GameEngine extends Backbone.Model
 
     constructor: ->
         super
-        @_load()
+        @words = new RandomWordCollection()
+        @words.bind 'refresh', => @_refresh()
 
-    _load: ->
-        if not @words? || @words.size() == 0
-            @words = new RandomWordCollection()
-            @words.bind 'refresh', => @_refresh()
-            @words.fetch()
+    start: ->
+        @words.fetch()
 
     _refresh: ->
         @set current_word: @words.at_random()
@@ -55,7 +50,6 @@ class GameEngine extends Backbone.Model
 
     current_word: ->
         @get('current_word')
-
 
     setAnswer: (article)->
         if @current_word().setAnswer article
@@ -80,12 +74,11 @@ class PlayView extends Backbone.View
         super
         @game_engine = new GameEngine()
         @_bindModel()
+        @game_engine.start()
   
     _bindModel: ->
-        @game_engine.bind 'change:word', =>
-            @changeWord()
-        @game_engine.bind 'change:correct_answer', =>
-            @renderMessage()
+        @game_engine.bind 'change:word', => @changeWord()
+        @game_engine.bind 'change:correct_answer', => @renderMessage()
 
     changeWord: ->
         $("#word-play-link").text(@game_engine.word())
@@ -136,7 +129,7 @@ class WordView extends Backbone.View
 
 class Words extends Backbone.Collection
     model: Word
-    url: 'word'
+    url: 'nouns'
 
 class WordAddView extends Backbone.View
              
@@ -202,7 +195,7 @@ app =
     start: ->
         $('#page_sets_manage').live 'pagecreate', (event) =>
             words = new Words
-                url: $("#word-list-view").data('url')
+                url: 'nouns'
 
             new PlayView
                 el: $("#word-play-view")

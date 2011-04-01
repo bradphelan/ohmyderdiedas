@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Thu, 31 Mar 2011 21:40:48 GMT from
+/* DO NOT MODIFY. This file was compiled Fri, 01 Apr 2011 16:04:49 GMT from
  * /Users/bradphelan/workspace/derdiedas/app/coffeescripts/words.coffee
  */
 
@@ -29,6 +29,7 @@
         this.set({
           score: this.get('score') + increment
         });
+        this.save();
         return true;
       } else {
         this.set({
@@ -43,33 +44,28 @@
     return RandomWord;
   })();
   RandomWordCollection = (function() {
+    function RandomWordCollection() {
+      RandomWordCollection.__super__.constructor.apply(this, arguments);
+    }
     __extends(RandomWordCollection, Backbone.Collection);
-    RandomWordCollection.prototype.url = function() {
-      return "random_word";
-    };
+    RandomWordCollection.prototype.url = "nouns";
     RandomWordCollection.prototype.model = RandomWord;
     RandomWordCollection.prototype.at_random = function() {
       return this.at(Math.randomFromTo(0, this.size() - 1));
     };
-    function RandomWordCollection(callback) {
-      RandomWordCollection.__super__.constructor.apply(this, arguments);
-    }
     return RandomWordCollection;
   })();
   GameEngine = (function() {
     __extends(GameEngine, Backbone.Model);
     function GameEngine() {
       GameEngine.__super__.constructor.apply(this, arguments);
-      this._load();
+      this.words = new RandomWordCollection();
+      this.words.bind('refresh', __bind(function() {
+        return this._refresh();
+      }, this));
     }
-    GameEngine.prototype._load = function() {
-      if (!(this.words != null) || this.words.size() === 0) {
-        this.words = new RandomWordCollection();
-        this.words.bind('refresh', __bind(function() {
-          return this._refresh();
-        }, this));
-        return this.words.fetch();
-      }
+    GameEngine.prototype.start = function() {
+      return this.words.fetch();
     };
     GameEngine.prototype._refresh = function() {
       this.set({
@@ -109,6 +105,7 @@
       PlayView.__super__.constructor.apply(this, arguments);
       this.game_engine = new GameEngine();
       this._bindModel();
+      this.game_engine.start();
     }
     PlayView.prototype._bindModel = function() {
       this.game_engine.bind('change:word', __bind(function() {
@@ -182,7 +179,7 @@
     }
     __extends(Words, Backbone.Collection);
     Words.prototype.model = Word;
-    Words.prototype.url = 'word';
+    Words.prototype.url = 'nouns';
     return Words;
   })();
   WordAddView = (function() {
@@ -267,7 +264,7 @@
       return $('#page_sets_manage').live('pagecreate', __bind(function(event) {
         var words;
         words = new Words({
-          url: $("#word-list-view").data('url')
+          url: 'nouns'
         });
         new PlayView({
           el: $("#word-play-view"),

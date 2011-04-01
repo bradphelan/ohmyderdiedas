@@ -24,7 +24,7 @@
     %div(data-role="collapsible" id="c2")
       %h3 Play
 
-      %div{:id=>"word-play-view", 'data-url'=>random_word_training_set_path(@training_set)}
+      %div{:id=>"word-play-view"}
         %ul{ :data => {:inset=>"true", :role=> "listview" }}
           %li(data-role="list-divider")
             %a{:id=>"word-play-link", :href=>"#dict", 'data-rel'=>'dialog', "data-transition"=>"pop"}
