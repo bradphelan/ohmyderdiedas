@@ -85,14 +85,7 @@ class PlayView extends Backbone.View
         $("#word-play-score").html("(" + @game_engine.score() + ")")
 
     renderMessage: ->
-        if @game_engine.correct_answer()
-            $("#word-play-message").html('Richtig')
-            $("#word-play-message").removeClass("incorrect")
-            $("#word-play-message").addClass("correct")
-        else
-            $("#word-play-message").html('Falsch')
-            $("#word-play-message").removeClass("correct")
-            $("#word-play-message").addClass("incorrect")
+        true
 
 
     events:
@@ -113,8 +106,10 @@ class PlayView extends Backbone.View
         @flashMessage()
 
     flashMessage: ->
-        $("#word-play-message").hide()
-        $("#word-play-message").fadeIn(1000)
+        if @game_engine.correct_answer()
+            $("#color-flash").animate( { backgroundColor: 'lightgreen' }, 10).animate( { backgroundColor: 'white' }, 1000)
+        else
+            $("#color-flash").animate( { backgroundColor: 'red' }, 10).animate( { backgroundColor: 'white' }, 1000)
 
 
 class WordView extends Backbone.View

@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Fri, 01 Apr 2011 16:56:48 GMT from
+/* DO NOT MODIFY. This file was compiled Fri, 01 Apr 2011 17:29:22 GMT from
  * /Users/bradphelan/workspace/derdiedas/app/coffeescripts/words.coffee
  */
 
@@ -120,15 +120,7 @@
       return $("#word-play-score").html("(" + this.game_engine.score() + ")");
     };
     PlayView.prototype.renderMessage = function() {
-      if (this.game_engine.correct_answer()) {
-        $("#word-play-message").html('Richtig');
-        $("#word-play-message").removeClass("incorrect");
-        return $("#word-play-message").addClass("correct");
-      } else {
-        $("#word-play-message").html('Falsch');
-        $("#word-play-message").removeClass("correct");
-        return $("#word-play-message").addClass("incorrect");
-      }
+      return true;
     };
     PlayView.prototype.events = {
       "click .der a": "handleDer",
@@ -148,8 +140,19 @@
       return this.flashMessage();
     };
     PlayView.prototype.flashMessage = function() {
-      $("#word-play-message").hide();
-      return $("#word-play-message").fadeIn(1000);
+      if (this.game_engine.correct_answer()) {
+        return $("#color-flash").animate({
+          backgroundColor: 'lightgreen'
+        }, 10).animate({
+          backgroundColor: 'white'
+        }, 1000);
+      } else {
+        return $("#color-flash").animate({
+          backgroundColor: 'red'
+        }, 10).animate({
+          backgroundColor: 'white'
+        }, 1000);
+      }
     };
     return PlayView;
   })();
