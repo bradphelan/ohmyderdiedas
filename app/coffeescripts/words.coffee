@@ -9,7 +9,7 @@ if not Math.randomFromTo?
 # - score
 # - error
 
-class RandomWord extends Backbone.Model
+class Word extends Backbone.Model
     setAnswer: (article)->
         if (article == @get('article'))
             increment = if @get('error') then -2 else 1
@@ -23,25 +23,35 @@ class RandomWord extends Backbone.Model
     score: -> @get 'score'
 
 
-class RandomWordCollection extends Backbone.Collection
+class Words extends Backbone.Collection
     url: "nouns"
 
-    model: RandomWord
+    model: Word
 
     at_random: ->
-        @at Math.randomFromTo(0, @size()-1)
+        # select random from bottom 4 words
+        r = 4
+        if @size() < 4
+            r = @size()
+        @at Math.randomFromTo(0, r-1)
+
+    comparator: (word)->
+        word.get('score')
+
 
 class GameEngine extends Backbone.Model
 
-    constructor: ->
-        super
-        @words = new RandomWordCollection()
+    constructor: (attr)->
+        super attr
+        @words = attr.words
         @words.bind 'refresh', => @_refresh()
 
     start: ->
         @words.fetch()
 
     _refresh: ->
+        @words.sort silent:true
+
         @set current_word: @words.at_random()
         # This is needed because we might
         # select the same word again which
@@ -70,9 +80,9 @@ class GameEngine extends Backbone.Model
 
 class PlayView extends Backbone.View
 
-    constructor: ->
-        super
-        @game_engine = new GameEngine()
+    constructor: (attr) ->
+        super attr
+        @game_engine = new GameEngine(words: attr.words)
         @_bindModel()
         @game_engine.start()
   
@@ -81,8 +91,13 @@ class PlayView extends Backbone.View
         @game_engine.bind 'change:correct_answer', => @renderMessage()
 
     changeWord: ->
-        $("#word-play-link").text(@game_engine.word())
-        $("#word-play-score").html("(" + @game_engine.score() + ")")
+        run = =>
+            $("#word-play-link").text(@game_engine.word())
+            $("#word-play-score").html("(" + @game_engine.score() + ")")
+        window.setTimeout run, 350
+
+        # Rerender the list view
+        @options.listview.render()
 
     renderMessage: ->
         true
@@ -109,20 +124,10 @@ class PlayView extends Backbone.View
         if @game_engine.correct_answer()
             $("#color-flash").animate( { backgroundColor: 'lightgreen' }, 10).animate( { backgroundColor: 'white' }, 1000)
         else
-            $("#color-flash").animate( { backgroundColor: 'red' }, 10).animate( { backgroundColor: 'white' }, 1000)
+            $("#color-flash").animate( { backgroundColor: 'red' }, 10).delay(400).animate( { backgroundColor: 'white' }, 200)
 
+        # Ensure the list view is up to date
 
-class WordView extends Backbone.View
-    tagName: "li"
-
-    render: ->
-      $(this.el).html(@model.get('article') + " " + @model.get('word'))
-      $(this.el).addClass(@model.get('article'))
-      return this
-
-class Words extends Backbone.Collection
-    model: RandomWord
-    url: 'nouns'
 
 class WordAddView extends Backbone.View
              
@@ -142,6 +147,15 @@ class WordAddView extends Backbone.View
 
     onError: (model, resp)->
         $("#messages").html(resp.responseText)
+
+class WordView extends Backbone.View
+
+    tagName: "li"
+
+    render: ->
+      $(this.el).html "#{@model.get('article')} #{@model.get('word')} (#{@model.get('score')})"
+      $(this.el).addClass(@model.get('article'))
+      return this
 
 class WordListView extends Backbone.View
 
@@ -187,16 +201,18 @@ $('#dict').live 'pageshow', (event) ->
 app =
     start: ->
         $('#page_sets_manage').live 'pagecreate', (event) =>
-            words = new Words
-                url: 'nouns'
 
-            new PlayView
-                el: $("#word-play-view")
-                leoView: @leoView
+            words = new Words()
 
-            new WordListView
+
+            listview = new WordListView
                  model: words
                  el: $("#word-list-view")
+
+            new PlayView
+                words: words
+                el: $("#word-play-view")
+                listview: listview
 
             new WordAddView
                  model: words

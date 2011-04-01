@@ -1,9 +1,9 @@
-/* DO NOT MODIFY. This file was compiled Fri, 01 Apr 2011 17:29:22 GMT from
+/* DO NOT MODIFY. This file was compiled Fri, 01 Apr 2011 20:35:50 GMT from
  * /Users/bradphelan/workspace/derdiedas/app/coffeescripts/words.coffee
  */
 
 (function() {
-  var GameEngine, PlayView, RandomWord, RandomWordCollection, WordAddView, WordListView, WordView, Words, app;
+  var GameEngine, PlayView, Word, WordAddView, WordListView, WordView, Words, app;
   var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
@@ -17,12 +17,12 @@
       return Math.floor(Math.random() * (to - from + 1) + from);
     };
   }
-  RandomWord = (function() {
-    function RandomWord() {
-      RandomWord.__super__.constructor.apply(this, arguments);
+  Word = (function() {
+    function Word() {
+      Word.__super__.constructor.apply(this, arguments);
     }
-    __extends(RandomWord, Backbone.Model);
-    RandomWord.prototype.setAnswer = function(article) {
+    __extends(Word, Backbone.Model);
+    Word.prototype.setAnswer = function(article) {
       var increment;
       if (article === this.get('article')) {
         increment = this.get('error') ? -2 : 1;
@@ -38,28 +38,36 @@
         return false;
       }
     };
-    RandomWord.prototype.score = function() {
+    Word.prototype.score = function() {
       return this.get('score');
     };
-    return RandomWord;
+    return Word;
   })();
-  RandomWordCollection = (function() {
-    function RandomWordCollection() {
-      RandomWordCollection.__super__.constructor.apply(this, arguments);
+  Words = (function() {
+    function Words() {
+      Words.__super__.constructor.apply(this, arguments);
     }
-    __extends(RandomWordCollection, Backbone.Collection);
-    RandomWordCollection.prototype.url = "nouns";
-    RandomWordCollection.prototype.model = RandomWord;
-    RandomWordCollection.prototype.at_random = function() {
-      return this.at(Math.randomFromTo(0, this.size() - 1));
+    __extends(Words, Backbone.Collection);
+    Words.prototype.url = "nouns";
+    Words.prototype.model = Word;
+    Words.prototype.at_random = function() {
+      var r;
+      r = 4;
+      if (this.size() < 4) {
+        r = this.size();
+      }
+      return this.at(Math.randomFromTo(0, r - 1));
     };
-    return RandomWordCollection;
+    Words.prototype.comparator = function(word) {
+      return word.get('score');
+    };
+    return Words;
   })();
   GameEngine = (function() {
     __extends(GameEngine, Backbone.Model);
-    function GameEngine() {
-      GameEngine.__super__.constructor.apply(this, arguments);
-      this.words = new RandomWordCollection();
+    function GameEngine(attr) {
+      GameEngine.__super__.constructor.call(this, attr);
+      this.words = attr.words;
       this.words.bind('refresh', __bind(function() {
         return this._refresh();
       }, this));
@@ -68,6 +76,9 @@
       return this.words.fetch();
     };
     GameEngine.prototype._refresh = function() {
+      this.words.sort({
+        silent: true
+      });
       this.set({
         current_word: this.words.at_random()
       });
@@ -101,9 +112,11 @@
   })();
   PlayView = (function() {
     __extends(PlayView, Backbone.View);
-    function PlayView() {
-      PlayView.__super__.constructor.apply(this, arguments);
-      this.game_engine = new GameEngine();
+    function PlayView(attr) {
+      PlayView.__super__.constructor.call(this, attr);
+      this.game_engine = new GameEngine({
+        words: attr.words
+      });
       this._bindModel();
       this.game_engine.start();
     }
@@ -116,8 +129,13 @@
       }, this));
     };
     PlayView.prototype.changeWord = function() {
-      $("#word-play-link").text(this.game_engine.word());
-      return $("#word-play-score").html("(" + this.game_engine.score() + ")");
+      var run;
+      run = __bind(function() {
+        $("#word-play-link").text(this.game_engine.word());
+        return $("#word-play-score").html("(" + this.game_engine.score() + ")");
+      }, this);
+      window.setTimeout(run, 350);
+      return this.options.listview.render();
     };
     PlayView.prototype.renderMessage = function() {
       return true;
@@ -149,34 +167,12 @@
       } else {
         return $("#color-flash").animate({
           backgroundColor: 'red'
-        }, 10).animate({
+        }, 10).delay(400).animate({
           backgroundColor: 'white'
-        }, 1000);
+        }, 200);
       }
     };
     return PlayView;
-  })();
-  WordView = (function() {
-    function WordView() {
-      WordView.__super__.constructor.apply(this, arguments);
-    }
-    __extends(WordView, Backbone.View);
-    WordView.prototype.tagName = "li";
-    WordView.prototype.render = function() {
-      $(this.el).html(this.model.get('article') + " " + this.model.get('word'));
-      $(this.el).addClass(this.model.get('article'));
-      return this;
-    };
-    return WordView;
-  })();
-  Words = (function() {
-    function Words() {
-      Words.__super__.constructor.apply(this, arguments);
-    }
-    __extends(Words, Backbone.Collection);
-    Words.prototype.model = RandomWord;
-    Words.prototype.url = 'nouns';
-    return Words;
   })();
   WordAddView = (function() {
     function WordAddView() {
@@ -204,6 +200,19 @@
       return $("#messages").html(resp.responseText);
     };
     return WordAddView;
+  })();
+  WordView = (function() {
+    function WordView() {
+      WordView.__super__.constructor.apply(this, arguments);
+    }
+    __extends(WordView, Backbone.View);
+    WordView.prototype.tagName = "li";
+    WordView.prototype.render = function() {
+      $(this.el).html("" + (this.model.get('article')) + " " + (this.model.get('word')) + " (" + (this.model.get('score')) + ")");
+      $(this.el).addClass(this.model.get('article'));
+      return this;
+    };
+    return WordView;
   })();
   WordListView = (function() {
     __extends(WordListView, Backbone.View);
@@ -260,17 +269,16 @@
   app = {
     start: function() {
       return $('#page_sets_manage').live('pagecreate', __bind(function(event) {
-        var words;
-        words = new Words({
-          url: 'nouns'
-        });
-        new PlayView({
-          el: $("#word-play-view"),
-          leoView: this.leoView
-        });
-        new WordListView({
+        var listview, words;
+        words = new Words();
+        listview = new WordListView({
           model: words,
           el: $("#word-list-view")
+        });
+        new PlayView({
+          words: words,
+          el: $("#word-play-view"),
+          listview: listview
         });
         return new WordAddView({
           model: words,
