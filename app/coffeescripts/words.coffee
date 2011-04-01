@@ -30,8 +30,8 @@ class Words extends Backbone.Collection
 
     at_random: ->
         # select random from bottom 4 words
-        r = 4
-        if @size() < 4
+        r = 8
+        if @size() < r
             r = @size()
         @at Math.randomFromTo(0, r-1)
 
