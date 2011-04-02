@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Fri, 01 Apr 2011 20:35:50 GMT from
+/* DO NOT MODIFY. This file was compiled Sat, 02 Apr 2011 16:46:04 GMT from
  * /Users/bradphelan/workspace/derdiedas/app/coffeescripts/words.coffee
  */
 
@@ -52,8 +52,8 @@
     Words.prototype.model = Word;
     Words.prototype.at_random = function() {
       var r;
-      r = 4;
-      if (this.size() < 4) {
+      r = 8;
+      if (this.size() < r) {
         r = this.size();
       }
       return this.at(Math.randomFromTo(0, r - 1));
@@ -76,13 +76,13 @@
       return this.words.fetch();
     };
     GameEngine.prototype._refresh = function() {
-      this.words.sort({
-        silent: true
-      });
       this.set({
         current_word: this.words.at_random()
       });
-      return this.trigger('change:word');
+      this.trigger('change:word');
+      return this.words.sort({
+        silent: true
+      });
     };
     GameEngine.prototype.current_word = function() {
       return this.get('current_word');

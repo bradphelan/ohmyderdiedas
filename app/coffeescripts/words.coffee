@@ -50,13 +50,13 @@ class GameEngine extends Backbone.Model
         @words.fetch()
 
     _refresh: ->
-        @words.sort silent:true
-
         @set current_word: @words.at_random()
         # This is needed because we might
         # select the same word again which
         # will not trigger an event
         @trigger('change:word')
+
+        @words.sort silent:true
 
     current_word: ->
         @get('current_word')
