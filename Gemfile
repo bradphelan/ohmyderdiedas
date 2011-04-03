@@ -54,9 +54,9 @@ gem 'cancan'
 
 gem 'taps'
 
+gem 'barista', '~> 1.0'
 group :development do
   # These generate code and don't run on heroku
-  gem 'barista', '~> 1.0'
   gem 'jammit'
   gem 'yui-compressor'
 end
