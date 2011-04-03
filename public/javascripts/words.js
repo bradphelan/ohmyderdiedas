@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Sun, 03 Apr 2011 06:57:26 GMT from
+/* DO NOT MODIFY. This file was compiled Sun, 03 Apr 2011 20:42:21 GMT from
  * /Users/bradphelan/workspace/derdiedas/app/coffeescripts/words.coffee
  */
 
@@ -125,8 +125,8 @@
     PlayView.prototype.changeWord = function() {
       var run;
       run = __bind(function() {
-        $("#word-play-link").text(this.game_engine.word());
-        return $("#word-play-score").html("(" + this.game_engine.score() + ")");
+        $("#word-play-link").text(this.game_engine.word() + " (" + this.game_engine.score() + ")");
+        return $("#word-play-link").data('word', this.game_engine.word());
       }, this);
       return window.setTimeout(run, 350);
     };
@@ -257,7 +257,7 @@
   })();
   $('#dict').live('pageshow', function(event) {
     var url, word;
-    word = $("#word-play-link").text();
+    word = $("#word-play-link").data('word');
     url = "http://pda.leo.org/?lp=ende&lang=de&searchLoc=0&cmpType=relaxed&relink=off&sectHdr=on&spellToler=&search=" + word;
     return $("iframe").attr('src', url);
   });

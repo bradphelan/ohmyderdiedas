@@ -90,8 +90,8 @@ class PlayView extends Backbone.View
 
     changeWord: ->
         run = =>
-            $("#word-play-link").text(@game_engine.word())
-            $("#word-play-score").html("(" + @game_engine.score() + ")")
+            $("#word-play-link").text(@game_engine.word() + " (" + @game_engine.score() + ")")
+            $("#word-play-link").data('word', @game_engine.word())
         window.setTimeout run, 350
 
     renderMessage: ->
@@ -192,7 +192,7 @@ class WordListView extends Backbone.View
 # Every time the leo page is shown we want to refresh
 # the IFrame that points to leo dictionary
 $('#dict').live 'pageshow', (event) ->
-    word = $("#word-play-link").text()
+    word = $("#word-play-link").data('word')
     url = "http://pda.leo.org/?lp=ende&lang=de&searchLoc=0&cmpType=relaxed&relink=off&sectHdr=on&spellToler=&search=#{word}"
     $("iframe").attr('src', url)
 
