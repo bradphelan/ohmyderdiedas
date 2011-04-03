@@ -1,0 +1,24 @@
+embed_assets: on
+package_assets: always
+
+javascripts:
+  workspace:
+    - public/javascripts/jquery.js
+
+    - public/javascripts/underscore.js
+    - public/javascripts/backbone.js
+    - public/javascripts/backbone_rails3_config.js
+
+    - public/javascripts/jqm_config.js
+    - public/javascripts/jquery.mobile-1.0a3.min.js
+    - public/jquery.mobile-1.0a4/*.js
+
+    - public/javascripts/jquery-ui.custom.min.js
+    - public/javascripts/rails.js
+    - public/javascripts/words.js
+
+
+stylesheets:
+  workspace:
+    - public/stylesheets/*.css
+    - public/jquery.mobile-1.0a4/*.css
