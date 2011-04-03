@@ -184,3 +184,4 @@ DEPENDENCIES
   rspec-rails (>= 2.0.0.beta.19)
   sqlite3-ruby
   taps
+  yui-compressor

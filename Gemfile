@@ -54,7 +54,9 @@ gem 'cancan'
 
 gem 'taps'
 
-# coffeescript support
-gem 'barista', '~> 1.0'
-
-gem 'jammit'
+group :development do
+  # These generate code and don't run on heroku
+  gem 'barista', '~> 1.0'
+  gem 'jammit'
+  gem 'yui-compressor'
+end
