@@ -30,5 +30,8 @@
   display: inline;
 }
 
+#word-play-link {
+  text-decoration: none;
+}
 
 

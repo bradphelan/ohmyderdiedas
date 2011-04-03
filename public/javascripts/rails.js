@@ -16,7 +16,7 @@
 
 	// Triggers an event on an element and returns the event result
 	function fire(obj, name, data) {
-		var event = new $.Event(name);
+		var event = $.Event(name);
 		obj.trigger(event, data);
 		return event.result !== false;
 	}
@@ -24,7 +24,7 @@
 	// Submits "remote" forms and links with ajax
 	function handleRemote(element) {
 		var method, url, data,
-			dataType = element.attr('data-type') || ($.ajaxSettings && $.ajaxSettings.dataType);
+			dataType = element.data('type') || ($.ajaxSettings && $.ajaxSettings.dataType);
 
 	if (fire(element, 'ajax:before')) {
 		if (element.is('form')) {
@@ -38,7 +38,7 @@
 				element.data('ujs:submit-button', null);
 			}
 		} else {
-			method = element.attr('data-method');
+			method = element.data('method');
 			url = element.attr('href');
 			data = null;
 		}
@@ -68,7 +68,7 @@
 	// <a href="/users/5" data-method="delete" rel="nofollow" data-confirm="Are you sure?">Delete</a>
 	function handleMethod(link) {
 		var href = link.attr('href'),
-			method = link.attr('data-method'),
+			method = link.data('method'),
 			csrf_token = $('meta[name=csrf-token]').attr('content'),
 			csrf_param = $('meta[name=csrf-param]').attr('content'),
 			form = $('<form method="post" action="' + href + '"></form>'),
@@ -83,23 +83,24 @@
 	}
 
 	function disableFormElements(form) {
-		form.find('input[data-disable-with]').each(function() {
-			var input = $(this);
-			input.data('ujs:enable-with', input.val())
-				.val(input.attr('data-disable-with'))
-				.attr('disabled', 'disabled');
+		form.find('input[data-disable-with], button[data-disable-with]').each(function() {
+			var element = $(this), method = element.is('button') ? 'html' : 'val';
+			element.data('ujs:enable-with', element[method]());
+			element[method](element.data('disable-with'));
+			element.attr('disabled', 'disabled');
 		});
 	}
 
 	function enableFormElements(form) {
-		form.find('input[data-disable-with]').each(function() {
-			var input = $(this);
-			input.val(input.data('ujs:enable-with')).removeAttr('disabled');
+		form.find('input[data-disable-with]:disabled, button[data-disable-with]:disabled').each(function() {
+			var element = $(this), method = element.is('button') ? 'html' : 'val';
+			if (element.data('ujs:enable-with')) element[method](element.data('ujs:enable-with'));
+			element.removeAttr('disabled');
 		});
 	}
 
 	function allowAction(element) {
-		var message = element.attr('data-confirm');
+		var message = element.data('confirm');
 		return !message || (fire(element, 'confirm') && confirm(message));
 	}
 
@@ -115,17 +116,17 @@
 		var link = $(this);
 		if (!allowAction(link)) return false;
 
-		if (link.attr('data-remote') != undefined) {
+		if (link.data('remote') != undefined) {
 			handleRemote(link);
 			return false;
-		} else if (link.attr('data-method')) {
+		} else if (link.data('method')) {
 			handleMethod(link);
 			return false;
 		}
 	});
 
 	$('form').live('submit.rails', function(e) {
-		var form = $(this), remote = form.attr('data-remote') != undefined;
+		var form = $(this), remote = form.data('remote') != undefined;
 		if (!allowAction(form)) return false;
 
 		// skip other logic when required values are missing
@@ -140,14 +141,14 @@
 		}
 	});
 
-	$('form input[type=submit], form button[type=submit], form button:not([type])').live('click.rails', function() {
+	$('form input[type=submit], form input[type=image], form button[type=submit], form button:not([type])').live('click.rails', function() {
 		var button = $(this);
 		if (!allowAction(button)) return false;
 		// register the pressed submit button
 		var name = button.attr('name'), data = name ? {name:name, value:button.val()} : null;
 		button.closest('form').data('ujs:submit-button', data);
 	});
-	
+
 	$('form').live('ajax:beforeSend.rails', function(event) {
 		if (this == event.target) disableFormElements($(this));
 	});

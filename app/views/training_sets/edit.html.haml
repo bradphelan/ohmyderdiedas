@@ -24,13 +24,12 @@
     %div(data-role="collapsible" id="c2")
       %h3 Play
 
+
       %div{:id=>"word-play-view"}
         %ul{ :data => {:inset=>"true", :role=> "listview" }}
-          %li(data-role="list-divider")
-            %div(id="color-flash" style="padding: 0.5em;")
-              %a{:id=>"word-play-link", :href=>"#dict", 'data-rel'=>'dialog', "data-transition"=>"pop"}
-              %span{:id=>"word-play-score"}
-            -#%span{:id=>"word-play-message"}
+          %li(id="color-flash" data-role="list-divider")
+            %a{:id=>"word-play-link", :href=>"#dict", 'data-rel'=>'dialog', "data-transition"=>"pop"}
+            %span{:id=>"word-play-score"}
           %li.der
             %a der
           %li.die 
@@ -58,4 +57,4 @@
 
 = content_for :javascript do
   = javascript_include_tag 'words'
-  = javascript_include_tag 'jquery.color.js'
+  = javascript_include_tag 'jquery-ui.custom.min.js'

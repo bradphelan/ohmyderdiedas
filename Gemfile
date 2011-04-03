@@ -52,5 +52,7 @@ gem 'formtastic'
 
 gem 'cancan'
 
+gem 'taps'
+
 # coffeescript support
 gem 'barista', '~> 1.0'

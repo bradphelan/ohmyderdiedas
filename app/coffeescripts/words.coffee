@@ -44,19 +44,15 @@ class GameEngine extends Backbone.Model
     constructor: (attr)->
         super attr
         @words = attr.words
-        @words.bind 'refresh', => @_refresh()
 
     start: ->
-        @words.fetch()
-
-    _refresh: ->
         @set current_word: @words.at_random()
         # This is needed because we might
         # select the same word again which
         # will not trigger an event
         @trigger('change:word')
 
-        @words.sort silent:true
+        @words.sort()
 
     current_word: ->
         @get('current_word')
@@ -64,7 +60,7 @@ class GameEngine extends Backbone.Model
     setAnswer: (article)->
         if @current_word().setAnswer article
             @set correct_answer: true
-            @_refresh()
+            @start()
         else
             @set correct_answer: false
 
@@ -84,6 +80,8 @@ class PlayView extends Backbone.View
         super attr
         @game_engine = new GameEngine(words: attr.words)
         @_bindModel()
+
+    start: ->
         @game_engine.start()
   
     _bindModel: ->
@@ -95,9 +93,6 @@ class PlayView extends Backbone.View
             $("#word-play-link").text(@game_engine.word())
             $("#word-play-score").html("(" + @game_engine.score() + ")")
         window.setTimeout run, 350
-
-        # Rerender the list view
-        @options.listview.render()
 
     renderMessage: ->
         true
@@ -122,9 +117,11 @@ class PlayView extends Backbone.View
 
     flashMessage: ->
         if @game_engine.correct_answer()
-            $("#color-flash").animate( { backgroundColor: 'lightgreen' }, 10).animate( { backgroundColor: 'white' }, 1000)
+            $("#color-flash").effect("highlight", {color: "green"}, 1000)
+            true
         else
-            $("#color-flash").animate( { backgroundColor: 'red' }, 10).delay(400).animate( { backgroundColor: 'white' }, 200)
+            $("#color-flash").effect("highlight", {color: "red"}, 1000)
+            true
 
         # Ensure the list view is up to date
 
@@ -165,12 +162,10 @@ class WordListView extends Backbone.View
         super
         @list = $(@el).find("ul")
         @bindModel()
-        @model.fetch
-            success: =>
-                @render()
 
     bindModel: ->
         @model.bind 'add', (noun)=> @prependWord(noun)
+        @model.bind 'refresh', => @render()
 
     refresh: ->
         @list.listview("refresh")
@@ -186,9 +181,12 @@ class WordListView extends Backbone.View
         @refresh()
 
     render: ->
-        @list.html("")
-        @model.each (word) => @appendWord(word)
-        @refresh()
+        html = $('<ul/>')
+        @model.each (word) =>
+            wv = new WordView(model: word).render().el
+            html.append(wv)
+        html.listview()
+        @list.html(html.html())
 
 
 # Every time the leo page is shown we want to refresh
@@ -204,12 +202,11 @@ app =
 
             words = new Words()
 
-
             listview = new WordListView
                  model: words
                  el: $("#word-list-view")
 
-            new PlayView
+            play_view = new PlayView
                 words: words
                 el: $("#word-play-view")
                 listview: listview
@@ -217,5 +214,10 @@ app =
             new WordAddView
                  model: words
                  el: $("#word-add-view")
+
+            # Load the data then start the game
+            words.fetch
+                success: =>
+                    play_view.start()
   
 app.start()

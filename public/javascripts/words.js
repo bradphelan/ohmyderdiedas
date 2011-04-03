@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Sat, 02 Apr 2011 16:46:04 GMT from
+/* DO NOT MODIFY. This file was compiled Sun, 03 Apr 2011 06:53:13 GMT from
  * /Users/bradphelan/workspace/derdiedas/app/coffeescripts/words.coffee
  */
 
@@ -68,21 +68,13 @@
     function GameEngine(attr) {
       GameEngine.__super__.constructor.call(this, attr);
       this.words = attr.words;
-      this.words.bind('refresh', __bind(function() {
-        return this._refresh();
-      }, this));
     }
     GameEngine.prototype.start = function() {
-      return this.words.fetch();
-    };
-    GameEngine.prototype._refresh = function() {
       this.set({
         current_word: this.words.at_random()
       });
       this.trigger('change:word');
-      return this.words.sort({
-        silent: true
-      });
+      return this.words.sort();
     };
     GameEngine.prototype.current_word = function() {
       return this.get('current_word');
@@ -92,7 +84,7 @@
         this.set({
           correct_answer: true
         });
-        return this._refresh();
+        return this.start();
       } else {
         return this.set({
           correct_answer: false
@@ -118,8 +110,10 @@
         words: attr.words
       });
       this._bindModel();
-      this.game_engine.start();
     }
+    PlayView.prototype.start = function() {
+      return this.game_engine.start();
+    };
     PlayView.prototype._bindModel = function() {
       this.game_engine.bind('change:word', __bind(function() {
         return this.changeWord();
@@ -134,8 +128,7 @@
         $("#word-play-link").text(this.game_engine.word());
         return $("#word-play-score").html("(" + this.game_engine.score() + ")");
       }, this);
-      window.setTimeout(run, 350);
-      return this.options.listview.render();
+      return window.setTimeout(run, 350);
     };
     PlayView.prototype.renderMessage = function() {
       return true;
@@ -159,17 +152,15 @@
     };
     PlayView.prototype.flashMessage = function() {
       if (this.game_engine.correct_answer()) {
-        return $("#color-flash").animate({
-          backgroundColor: 'lightgreen'
-        }, 10).animate({
-          backgroundColor: 'white'
+        $("#color-flash").effect("highlight", {
+          color: "green"
         }, 1000);
+        return true;
       } else {
-        return $("#color-flash").animate({
-          backgroundColor: 'red'
-        }, 10).delay(400).animate({
-          backgroundColor: 'white'
-        }, 200);
+        $("#color-flash").effect("highlight", {
+          color: "red"
+        }, 1000);
+        return true;
       }
     };
     return PlayView;
@@ -221,15 +212,13 @@
       WordListView.__super__.constructor.apply(this, arguments);
       this.list = $(this.el).find("ul");
       this.bindModel();
-      this.model.fetch({
-        success: __bind(function() {
-          return this.render();
-        }, this)
-      });
     }
     WordListView.prototype.bindModel = function() {
-      return this.model.bind('add', __bind(function(noun) {
+      this.model.bind('add', __bind(function(noun) {
         return this.prependWord(noun);
+      }, this));
+      return this.model.bind('refresh', __bind(function() {
+        return this.render();
       }, this));
     };
     WordListView.prototype.refresh = function() {
@@ -252,11 +241,17 @@
       return this.refresh();
     };
     WordListView.prototype.render = function() {
-      this.list.html("");
+      var html;
+      html = $('<ul/>');
       this.model.each(__bind(function(word) {
-        return this.appendWord(word);
+        var wv;
+        wv = new WordView({
+          model: word
+        }).render().el;
+        return html.append(wv);
       }, this));
-      return this.refresh();
+      html.listview();
+      return this.list.html(html.html());
     };
     return WordListView;
   })();
@@ -269,20 +264,25 @@
   app = {
     start: function() {
       return $('#page_sets_manage').live('pagecreate', __bind(function(event) {
-        var listview, words;
+        var listview, play_view, words;
         words = new Words();
         listview = new WordListView({
           model: words,
           el: $("#word-list-view")
         });
-        new PlayView({
+        play_view = new PlayView({
           words: words,
           el: $("#word-play-view"),
           listview: listview
         });
-        return new WordAddView({
+        new WordAddView({
           model: words,
           el: $("#word-add-view")
+        });
+        return words.fetch({
+          success: __bind(function() {
+            return play_view.start();
+          }, this)
         });
       }, this));
     }
