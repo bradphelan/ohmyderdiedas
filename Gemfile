@@ -56,3 +56,5 @@ gem 'taps'
 
 # coffeescript support
 gem 'barista', '~> 1.0'
+
+gem 'jammit'

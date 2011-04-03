@@ -2,17 +2,8 @@
 %html
   %head
     %title Oh My Der Die Das
-    = javascript_include_tag :defaults
-    %link{:href => "http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.css", :rel => "stylesheet"}/
-    = javascript_include_tag 'jqm_config.js'
-    %script{:src => "http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.js"}
-    %script{:src =>"http://documentcloud.github.com/underscore/underscore.js"}
-    %script{:src =>"http://documentcloud.github.com/backbone/backbone.js"}
-    = javascript_include_tag 'backbone_rails3_config' #CSRF protection patch for backbone / rails3
-    = yield :javascript
-    = stylesheet_link_tag 'formtastic'
-    = stylesheet_link_tag 'formtastic_changes'
-    = stylesheet_link_tag 'application'
+    = include_stylesheets :workspace, :media => :all
+    = include_javascripts :workspace
     = csrf_meta_tag
   %body
     %div{:class => @page, "data-role" => "page", :id => @page}
