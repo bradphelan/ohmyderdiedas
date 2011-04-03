@@ -117,10 +117,10 @@ class PlayView extends Backbone.View
 
     flashMessage: ->
         if @game_engine.correct_answer()
-            $("#color-flash").effect("highlight", {color: "green"}, 1000)
+            $("#color-flash").effect("highlight", {color: "lightgreen"}, 600)
             true
         else
-            $("#color-flash").effect("highlight", {color: "red"}, 1000)
+            $("#color-flash").effect("highlight", {color: "red"}, 600)
             true
 
         # Ensure the list view is up to date

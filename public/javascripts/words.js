@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Sun, 03 Apr 2011 06:53:13 GMT from
+/* DO NOT MODIFY. This file was compiled Sun, 03 Apr 2011 06:57:26 GMT from
  * /Users/bradphelan/workspace/derdiedas/app/coffeescripts/words.coffee
  */
 
@@ -153,13 +153,13 @@
     PlayView.prototype.flashMessage = function() {
       if (this.game_engine.correct_answer()) {
         $("#color-flash").effect("highlight", {
-          color: "green"
-        }, 1000);
+          color: "lightgreen"
+        }, 600);
         return true;
       } else {
         $("#color-flash").effect("highlight", {
           color: "red"
-        }, 1000);
+        }, 600);
         return true;
       }
     };
